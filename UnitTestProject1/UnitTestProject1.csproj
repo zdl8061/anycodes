@@ -36,6 +36,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\Bin\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Web" />
@@ -55,11 +58,16 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="ClassGenerating.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTest2.cs" />
     <Compile Include="UnitTest3.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ZDL.AnyCodes\ZDL.AnyCodes.csproj">
+      <Project>{d4f63af1-dcec-44a5-84cb-bb06485a75b3}</Project>
+      <Name>ZDL.AnyCodes</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

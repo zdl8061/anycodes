@@ -24,7 +24,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
 
-namespace UnitTestProject1
+namespace ZDL.AnyCodes
 {
     public class ClassGenerating
     {
