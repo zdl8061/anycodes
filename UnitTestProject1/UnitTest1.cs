@@ -51,7 +51,7 @@ namespace UnitTestProject1
             dataTable.Columns.Add("ID", typeof(int));
             dataTable.Columns.Add("GuidType", typeof(string));
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 10; i++) 
             {
                 DataRow dr = dataTable.NewRow();
                 dr["Name"] = "STRING" + i;
