@@ -73,7 +73,7 @@ namespace ZDL.AnyCodes
         /// <typeparam name="T"></typeparam>
         /// <param name="dataTable"></param>
         /// <returns></returns>
-        public static List<T> FromTable<T>(DataTable dataTable)
+        public static List<T> FromTable<T>(DataTable dataTable,T anonymous)
         {
             List<T> list = new List<T>();
             if (dataTable == null || dataTable.Rows.Count == 0)
@@ -90,7 +90,7 @@ namespace ZDL.AnyCodes
                 foreach (ParameterInfo item in parameters)
                 {
                     object itemValue = null;
-                    if (dr[item.Name] != null)
+                    if (dataTable.Columns.Contains(item.Name))
                     {
                         itemValue = Convert.ChangeType(dr[item.Name], item.ParameterType);
                     }

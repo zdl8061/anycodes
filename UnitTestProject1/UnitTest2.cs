@@ -61,7 +61,7 @@ namespace UnitTestProject1
             }
         }
 
-        T Cast<T>(object obj, T type)
+        public T Cast<T>(object obj, T type)
         {
             return (T)obj;
         }

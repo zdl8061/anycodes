@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 using System.Dynamic;
 using System.Collections.Generic;
 using ZDL.AnyCodes;
+using Newtonsoft.Json;
+using System.Linq;
 
 namespace UnitTestProject1
 {
@@ -76,8 +78,42 @@ namespace UnitTestProject1
             _goods.clue_phone_txid = 123;
             _goods.origin_type = 3;
 
-            s = ClassGenerating.DynamicToClass(_goods, "userinfo");
+            var _r = JsonConvert.SerializeObject(_goods);
+
+            var abc = new { clue_name = "", clue_phone_txid = 0, origin_type = 0 };
+
+            var _t = JsonConvert.DeserializeAnonymousType(_r,abc );
+            
+        }
+
+        [TestMethod]
+        public void TestMethod5()
+        {
+            DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("Name", typeof(string));
+            dataTable.Columns.Add("ID", typeof(int));
+            dataTable.Columns.Add("GuidType", typeof(string));
+
+            for (int i = 0; i < 10; i++)
+            {
+                DataRow dr = dataTable.NewRow();
+                dr["Name"] = "STRING" + i;
+                dr["ID"] = i;
+                if (i % 2 == 0)
+                    dr["GuidType"] = "GuidType" + i;
+                else
+                {
+                    dr["GuidType"] = DBNull.Value;
+                }
+                dataTable.Rows.Add(dr);
+            }
+
+            var _list = ListAndTableExtension.FromTable(dataTable,
+                new { Name = "", ID = 0, GuidType = "" });
+
+            var _json = JsonConvert.SerializeObject(_list);
 
         }
+
     }
 }
