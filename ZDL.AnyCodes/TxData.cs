@@ -25,7 +25,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Txooo.SAAS.Components
+namespace ZDL.AnyCodes
 {
     /// <summary>
     /// 数据交互封装测试
@@ -301,7 +301,7 @@ namespace Txooo.SAAS.Components
         public TxTable() { }
 
         /// <summary>
-        /// 数据库表名
+        /// 数据库表名或视图名
         /// </summary>
         public string Name { get; set; }
 
@@ -309,6 +309,11 @@ namespace Txooo.SAAS.Components
         /// 数据库连接配置节点名称
         /// </summary>
         public string Base { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string View { get; set; }
     }
 
 }
