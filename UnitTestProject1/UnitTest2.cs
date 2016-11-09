@@ -66,40 +66,6 @@ namespace UnitTestProject1
             return (T)obj;
         }
 
-        [TestMethod]
-        public void TestMethod4()
-        {
-            var entity = new { Name = "item", ID = 0, GuidType = Guid.Empty };
-
-
-            DataTable dataTable = new DataTable();
-            dataTable.Columns.Add("Name", typeof(string));
-            dataTable.Columns.Add("ID", typeof(int));
-            dataTable.Columns.Add("GuidType", typeof(Guid));
-
-            for (int i = 0; i < 10; i++)
-            {
-                DataRow dr = dataTable.NewRow();
-                dr["Name"] = "STRING" + i;
-                dr["ID"] = i;
-                if (i % 2 == 0)
-                    dr["GuidType"] = Guid.Empty;
-                else
-                {
-                    dr["GuidType"] = DBNull.Value;
-                }
-                dataTable.Rows.Add(dr);
-            }
-
-            IList list = ListAndTableExtension.FromTable(entity.GetType(), dataTable);
-
-            foreach (var item in list)
-            {
-                var _origin = Cast(item, entity);
-                
-            }
-
-            var r = JsonConvert.SerializeObject(list);
-        }
+     
     }
 }

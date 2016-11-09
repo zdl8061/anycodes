@@ -108,10 +108,21 @@ namespace UnitTestProject1
                 dataTable.Rows.Add(dr);
             }
 
-            var _list = ListAndTableExtension.FromTable(dataTable,
-                new { Name = "", ID = 0, GuidType = "" });
+            var _aType = new { Name = "", ID = 0, GuidType = "" };
+
+            var _list = ListAndTableExtension.FromTable(dataTable, _aType);
+
 
             var _json = JsonConvert.SerializeObject(_list);
+
+            var _jsonObj = JsonConvert.SerializeObject(_list[0]);
+
+            var _r = ListAndTableExtension.FromJsonObject(_jsonObj, _aType);
+           
+
+            var _r2 = ListAndTableExtension.FromJsonArray(_json, _aType);
+
+           
 
         }
 

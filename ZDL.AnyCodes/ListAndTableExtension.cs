@@ -28,45 +28,12 @@ using System.Text.RegularExpressions;
 using Match = System.Text.RegularExpressions.Match;
 
 using Microsoft.CSharp;
+using Newtonsoft.Json;
 
 namespace ZDL.AnyCodes
 {
     public static class ListAndTableExtension
-    {
-        /// <summary>
-        /// 匿名类的转换方式
-        /// </summary>
-        /// <param name="GenericType"></param>
-        /// <param name="dataTable"></param>
-        /// <returns></returns>
-        public static IList FromTable(Type GenericType, DataTable dataTable)
-        {
-            Type typeMaster = typeof(List<>);
-            Type listType = typeMaster.MakeGenericType(GenericType);
-            IList list = Activator.CreateInstance(listType) as IList;
-            if (dataTable == null || dataTable.Rows.Count == 0)
-                return list;
-            var constructor = GenericType.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                           .OrderBy(c => c.GetParameters().Length).First();
-            var parameters = constructor.GetParameters();
-            var values = new object[parameters.Length];
-            foreach (DataRow dr in dataTable.Rows)
-            {
-                int index = 0;
-                foreach (ParameterInfo item in parameters)
-                {
-                    object itemValue = null;
-                    if (dr[item.Name] != null && dr[item.Name] != DBNull.Value)
-                    {
-                        itemValue = Convert.ChangeType(dr[item.Name], item.ParameterType);
-                    }
-                    values[index++] = itemValue;
-                }
-                list.Add(constructor.Invoke(values));
-            }
-            return list;
-        }
-
+    {    
         /// <summary>
         /// 匿名类的转换方式
         /// </summary>
@@ -102,5 +69,31 @@ namespace ZDL.AnyCodes
             return list;
         }
 
+        /// <summary>
+        /// json字符串转匿名类型对象
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dataTable"></param>
+        /// <returns></returns>
+        public static T FromJsonObject<T>(string json, T anonymous)
+        {
+            var _obj = JsonConvert.DeserializeAnonymousType<T>(json, anonymous);
+
+            return _obj;
+           
+        }
+
+        /// <summary>
+        /// json字符串转匿名列表
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dataTable"></param>
+        /// <returns></returns>
+        public static List<T> FromJsonArray<T>(string json, T anonymous)
+        {          
+            var list = JsonConvert.DeserializeObject<List<T>>(json);
+
+            return list;
+        }
     }
 }
