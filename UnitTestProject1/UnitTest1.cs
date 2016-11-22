@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using ZDL.AnyCodes;
 using Newtonsoft.Json;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace UnitTestProject1
 {
@@ -124,6 +125,26 @@ namespace UnitTestProject1
 
            
 
+        }
+
+        [TestMethod]
+        public void TestMethod6()
+        {
+            //var _obj = new { name = "stevevai", age = 40 };
+
+            //string _json = JsonConvert.SerializeObject(_obj);
+
+
+            var _obj2 = JsonConvert.DeserializeAnonymousType("{\"name\":\"stevevai\",\"age\":40}", new { name = "", age = 0 });
+
+
+
+            string xml = "<Test><Name>Test class</Name><X>100</X><Y>200</Y></Test>";
+
+            XDocument doc = XDocument.Parse(xml);
+            string json = JsonConvert.SerializeXNode(doc);
+
+           
         }
 
     }
