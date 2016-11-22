@@ -8,6 +8,7 @@ using ZDL.AnyCodes;
 using Newtonsoft.Json;
 using System.Linq;
 using System.Xml.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace UnitTestProject1
 {
@@ -144,7 +145,30 @@ namespace UnitTestProject1
             XDocument doc = XDocument.Parse(xml);
             string json = JsonConvert.SerializeXNode(doc);
 
-           
+
+
+            string _json = "{\"name\":\"stevevai\",\"age\":40}";
+
+            JObject jO = JObject.Parse(_json);
+
+            jO["count"] = 100;
+
+            var _re = jO.ToString();
+
+
+
+            JArray arr = new JArray();
+            arr.Add(JObject.Parse("{\"name\":\"a\",\"age\":1}"));
+            arr.Add(JObject.Parse("{\"name\":\"b\",\"age\":2}"));
+            arr.Add(JObject.Parse("{\"name\":\"c\",\"age\":3}"));
+
+            JObject j2 = new JObject();
+            j2["name"] = "malmsteen";
+            j2["li"] = arr;
+
+            string j2str = j2.ToString();
+
+
         }
 
     }
