@@ -66,6 +66,14 @@ namespace UnitTestProject1
             return (T)obj;
         }
 
-     
+
+        [TestMethod]
+        public void TestMethod4()
+        {
+            ZDL.AnyCodes.SmsMutiSendService.SmsMultiSendServiceSoapClient _client = new ZDL.AnyCodes.SmsMutiSendService.SmsMultiSendServiceSoapClient();
+            var _isOk = _client.SendAliTplSMS("13683694458,15652570108", "SMS_30125158", "天下商机", "{}");
+
+            //_client.SendAliTplSMS(new string[] { "13683694458" }, "", "天下商机", "{}");
+        }
     }
 }

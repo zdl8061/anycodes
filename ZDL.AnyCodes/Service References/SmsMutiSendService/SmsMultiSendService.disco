@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="http://service.txooo.com/Internal/V1/SmsMultiSendService.asmx?wsdl" docRef="http://service.txooo.com/Internal/V1/SmsMultiSendService.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="http://service.txooo.com/Internal/V1/SmsMultiSendService.asmx" xmlns:q1="http://tempuri.org/" binding="q1:SmsMultiSendServiceSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <soap address="http://service.txooo.com/Internal/V1/SmsMultiSendService.asmx" xmlns:q2="http://tempuri.org/" binding="q2:SmsMultiSendServiceSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+</discovery>
