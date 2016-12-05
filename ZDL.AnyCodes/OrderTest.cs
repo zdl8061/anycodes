@@ -25,6 +25,7 @@ namespace ZDL.AnyCodes
 {
     public class OrderTest
     {
+       public event EventHandler OnPaySuccess;
         /// <summary>
         /// 产品图片
         /// </summary>
@@ -60,8 +61,10 @@ namespace ZDL.AnyCodes
         /// </summary>
         /// <param name="orderSN"></param>
         /// <returns></returns>
-        public static bool PayOK()
+        public bool PayOK()
         {
+            if (OnPaySuccess != null)
+                OnPaySuccess(this, new EventArgs());
             return false;
 
         }

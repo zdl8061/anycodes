@@ -81,5 +81,23 @@ namespace UnitTestProject1
             //});
 
         }
+
+        [TestMethod]
+        public void TestMethod4()
+        {
+
+            OrderTest _order = new OrderTest();
+            _order.OnPaySuccess += (o, e) =>
+            {
+                string s = "asdf";
+
+                
+            };
+
+            _order.PayOK();
+
+        }
+
+      
     }
 }
