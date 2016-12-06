@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 
 namespace ZDL.AnyCodes
 {
+    //public delegate void OrderEventHandler(OrderTest info);
     public class OrderTest
     {
        public event EventHandler OnPaySuccess;

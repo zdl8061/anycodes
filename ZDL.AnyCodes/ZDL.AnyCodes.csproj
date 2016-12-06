@@ -59,6 +59,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Task\TaskBase.cs" />
+    <Compile Include="Task\TaskA.cs" />
+    <Compile Include="Task\TaskManger.cs" />
     <Compile Include="TxData.cs" />
     <Compile Include="ClassGenerating.cs" />
     <Compile Include="ListAndTableExtension.cs" />
