@@ -54,6 +54,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="OrderTest.cs" />
+    <Compile Include="Service References\FilterService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Service References\SmsMutiSendService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -74,6 +79,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Service References\FilterService\FilterService.wsdl" />
+    <None Include="Service References\FilterService\ZDL.AnyCodes.FilterService.FilterUserDataResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\SmsMutiSendService\SmsMultiSendService.wsdl" />
     <None Include="Service References\SmsMutiSendService\ZDL.AnyCodes.SmsMutiSendService.SendAliTplSMSResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
@@ -83,6 +92,7 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <WCFMetadataStorage Include="Service References\FilterService\" />
     <WCFMetadataStorage Include="Service References\SmsMutiSendService\" />
   </ItemGroup>
   <ItemGroup>
@@ -96,6 +106,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Service References\SmsMutiSendService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\FilterService\FilterService.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\FilterService\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\FilterService\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\FilterService\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
