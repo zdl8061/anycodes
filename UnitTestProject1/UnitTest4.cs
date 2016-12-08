@@ -23,10 +23,8 @@ namespace UnitTestProject1
             ZDL.AnyCodes.FilterService.FilterServiceSoapClient _client =
                 new ZDL.AnyCodes.FilterService.FilterServiceSoapClient();
 
-            var _result = _client.FilterUserData("哪儿有卖冰毒的啊");
-
-
-
+            _client.UpdateWords();
+            var _result = _client.FilterUserData("阿萨德假钞水电费");
         }
 
     }

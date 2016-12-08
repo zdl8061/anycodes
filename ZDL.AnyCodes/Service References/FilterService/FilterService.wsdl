@@ -16,6 +16,12 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="UpdateWords">
+        <s:complexType />
+      </s:element>
+      <s:element name="UpdateWordsResponse">
+        <s:complexType />
+      </s:element>
     </s:schema>
   </wsdl:types>
   <wsdl:message name="FilterUserDataSoapIn">
@@ -24,10 +30,20 @@
   <wsdl:message name="FilterUserDataSoapOut">
     <wsdl:part name="parameters" element="tns:FilterUserDataResponse" />
   </wsdl:message>
+  <wsdl:message name="UpdateWordsSoapIn">
+    <wsdl:part name="parameters" element="tns:UpdateWords" />
+  </wsdl:message>
+  <wsdl:message name="UpdateWordsSoapOut">
+    <wsdl:part name="parameters" element="tns:UpdateWordsResponse" />
+  </wsdl:message>
   <wsdl:portType name="FilterServiceSoap">
     <wsdl:operation name="FilterUserData">
       <wsdl:input message="tns:FilterUserDataSoapIn" />
       <wsdl:output message="tns:FilterUserDataSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateWords">
+      <wsdl:input message="tns:UpdateWordsSoapIn" />
+      <wsdl:output message="tns:UpdateWordsSoapOut" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="FilterServiceSoap" type="tns:FilterServiceSoap">
@@ -41,11 +57,29 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="UpdateWords">
+      <soap:operation soapAction="http://tempuri.org/UpdateWords" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="FilterServiceSoap12" type="tns:FilterServiceSoap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
     <wsdl:operation name="FilterUserData">
       <soap12:operation soapAction="http://tempuri.org/FilterUserData" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateWords">
+      <soap12:operation soapAction="http://tempuri.org/UpdateWords" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

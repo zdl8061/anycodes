@@ -21,6 +21,12 @@ namespace ZDL.AnyCodes.FilterService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/FilterUserData", ReplyAction="*")]
         System.Threading.Tasks.Task<ZDL.AnyCodes.FilterService.FilterUserDataResponse> FilterUserDataAsync(ZDL.AnyCodes.FilterService.FilterUserDataRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/UpdateWords", ReplyAction="*")]
+        void UpdateWords();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/UpdateWords", ReplyAction="*")]
+        System.Threading.Tasks.Task UpdateWordsAsync();
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -141,6 +147,14 @@ namespace ZDL.AnyCodes.FilterService {
             inValue.Body = new ZDL.AnyCodes.FilterService.FilterUserDataRequestBody();
             inValue.Body.content = content;
             return ((ZDL.AnyCodes.FilterService.FilterServiceSoap)(this)).FilterUserDataAsync(inValue);
+        }
+        
+        public void UpdateWords() {
+            base.Channel.UpdateWords();
+        }
+        
+        public System.Threading.Tasks.Task UpdateWordsAsync() {
+            return base.Channel.UpdateWordsAsync();
         }
     }
 }
