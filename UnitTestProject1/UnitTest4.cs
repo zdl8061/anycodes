@@ -4,6 +4,9 @@ using ZDL.AnyCodes.Task;
 using System.IO;
 using System.Collections.Generic;
 using Txooo;
+using ZDL.AnyCodes;
+using System.Threading;
+using System.Linq;
 
 namespace UnitTestProject1
 {
@@ -16,6 +19,55 @@ namespace UnitTestProject1
             TaskManger.Login();
         }
 
+        [TestMethod]
+        public void TestMethod3()
+        {
+            //int evertCount = 1000;
+
+            //List<string> _wordList = new List<string>();
+            //using (StreamReader sr = new StreamReader("TXT.txt"))
+            //{
+            //    while (sr.Peek() > -1)
+            //    {
+            //        string _word = sr.ReadLine().Replace(" ", "").Replace("/r", "").Replace("/n", "");
+
+            //        _wordList.Add(_word);
+            //    }
+            //}
+
+            //var _pages = (_wordList.Count + evertCount - 1) / evertCount;
+
+
+            //for (int i = 1; i <= _pages; i++)
+            //{
+            //    int _pageIndex = i;
+
+            //    var _currentList = _wordList.Skip((_pageIndex - 1) * evertCount).Take(evertCount);
+
+            //    using (TxDataHelper helper = TxDataHelper.GetDataHelper("TxoooCMS08"))
+            //    {
+            //        foreach (string word in _currentList)
+            //        {
+            //            try
+            //            {
+            //                string _sql = "INSERT INTO [dbo].[bad_words]([keyword]) VALUES(@K)";
+            //                helper.SpFileValue["@k"] = word;
+            //                helper.SqlExecute(_sql, helper.SpFileValue);
+            //            }
+            //            catch (Exception)
+            //            {
+            //                continue;
+            //            }
+
+            //        }
+            //    }
+
+            //    Thread.Sleep(2000);
+            //}
+
+            //Console.ReadLine();
+        }
+
 
         [TestMethod]
         public void TestMethod2()
@@ -23,8 +75,11 @@ namespace UnitTestProject1
             ZDL.AnyCodes.FilterService.FilterServiceSoapClient _client =
                 new ZDL.AnyCodes.FilterService.FilterServiceSoapClient();
 
-            _client.UpdateWords();
-            var _result = _client.FilterUserData("阿萨德假钞水电费");
+            //HttpTools _req = new HttpTools("http://world.huanqiu.com/exclusive/2016-12/9781710.html");
+            //string _content = _req.Get();
+
+            //_client.UpdateWords();
+            var _result = _client.FilterUserData("买卖枪支");
         }
 
     }
