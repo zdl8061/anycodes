@@ -79,7 +79,7 @@ namespace UnitTestProject1
             //string _content = _req.Get();
 
             //_client.UpdateWords();
-            var _result = _client.FilterUserData("买卖枪支");
+            var _result = _client.FilterUserData("阿斯顿发送到发送到发斯蒂芬买卖枪支飞飞2323让3");
         }
 
     }
