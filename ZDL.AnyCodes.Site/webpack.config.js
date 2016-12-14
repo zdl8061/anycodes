@@ -5,6 +5,7 @@
 * @Last Modified time: 2016-12-07 14:06:46
 */
 
+var webpack = require('webpack');
 var path = require('path');
 var HtmlwebpackPlugin = require('html-webpack-plugin');
 //定义了一些文件夹的路径
@@ -14,11 +15,14 @@ var BUILD_PATH = path.resolve(ROOT_PATH, 'build');
 
 module.exports = {
   //项目的文件夹 可以直接用文件夹名称 默认会找index.js 也可以确定是哪个文件名字
-  entry: APP_PATH,
+  entry: {
+    bundle:APP_PATH,
+    vendor:['jquery']
+  },
   //输出的文件名 合并以后的js会命名为bundle.js
   output: {
     path: BUILD_PATH,
-    filename: 'bundle.js'
+    filename: "[name].js"
   },
   devServer: {
     historyApiFallback: true,
@@ -44,6 +48,7 @@ module.exports = {
   plugins: [
     new HtmlwebpackPlugin({
       title: 'Hello World app'
-    })
+    }),
+    new webpack.optimize.CommonsChunkPlugin('vendor',  'vendor.js')
   ]
 };
