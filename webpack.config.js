@@ -2,7 +2,7 @@
 * @Author: Marte
 * @Date:   2016-12-07 14:01:14
 * @Last Modified by:   Marte
-* @Last Modified time: 2016-12-07 14:06:46
+* @Last Modified time: 2016-12-26 15:47:47
 */
 
 var webpack = require('webpack');
@@ -10,8 +10,8 @@ var path = require('path');
 var HtmlwebpackPlugin = require('html-webpack-plugin');
 //定义了一些文件夹的路径
 var ROOT_PATH = path.resolve(__dirname);
-var APP_PATH = path.resolve(ROOT_PATH, 'app');
-var BUILD_PATH = path.resolve(ROOT_PATH, 'build');
+var APP_PATH = path.resolve(ROOT_PATH, 'ZDL.AnyCodes.Site/js');
+var BUILD_PATH = path.resolve(ROOT_PATH, 'ZDL.AnyCodes.Site.Build');
 
 module.exports = {
   //项目的文件夹 可以直接用文件夹名称 默认会找index.js 也可以确定是哪个文件名字
