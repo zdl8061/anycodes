@@ -28,61 +28,63 @@ using Txooo;
 
 namespace ZDL.AnyCodes
 {
-    public class TxDataV2
+    public class TxDataV2<T> //where T:Entity
     {
-        public static int SqlInsert(string dataBase, string sql, params object[] sqlParams)
+        public int SqlInsert(string sql, TxDataHelper dbhelper, params object[] sqlParams)
         {
-            try
+
+            string _dataBase = "";
+            var _hashTable = new Hashtable();
+
+            var _matches = Regex.Matches(sql, "@p\\d", RegexOptions.IgnoreCase);
+            for (int i = 0; i < _matches.Count; i++)
             {
-                var _hashTable = new Hashtable();
+                _hashTable[_matches[i].Value] = sqlParams[i];
+            }
 
-                var _matches = Regex.Matches(sql, "@p\\d", RegexOptions.IgnoreCase);
-                for (int i = 0; i < _matches.Count; i++)
+            var _dbFun = new Func<TxDataHelper, int>(db =>
+            {
+                db.SpFileValue = _hashTable;
+                return db.SqlExecute(sql, db.SpFileValue);
+            });
+
+            if (dbhelper == null)
+            {
+                using (dbhelper = Txooo.TxDataHelper.GetDataHelper(_dataBase))
                 {
-                    _hashTable[_matches[i].Value] = sqlParams[i];
-                }
-
-                using (Txooo.TxDataHelper helper = Txooo.TxDataHelper.GetDataHelper(dataBase))
-                {
-                    helper.SpFileValue = _hashTable;
-
-                    return helper.SqlExecute(sql, helper.SpFileValue);
+                    return _dbFun(dbhelper);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                TxLogHelper.GetLogger("TxDataV2").Error(ex.Source + "|" + ex.TargetSite + "|" + ex.Message);
-
-                return 0;
+                return _dbFun(dbhelper);
             }
         }
 
-        public static DataTable SqlSelect(string dataBase, string sql, params object[] sqlParams)
+        public DataTable SqlSelect(string sql, params object[] sqlParams)
         {
-            try
+
+            string _dataBase = "";
+            var _hashTable = new Hashtable();
+
+            var _matches = Regex.Matches(sql, "@p\\d", RegexOptions.IgnoreCase);
+            for (int i = 0; i < _matches.Count; i++)
             {
-                var _hashTable = new Hashtable();
-
-                var _matches = Regex.Matches(sql, "@p\\d", RegexOptions.IgnoreCase);
-                for (int i = 0; i < _matches.Count; i++)
-                {
-                    _hashTable[_matches[i].Value] = sqlParams[i];
-                }
-
-                using (Txooo.TxDataHelper helper = Txooo.TxDataHelper.GetDataHelper(dataBase))
-                {
-                    helper.SpFileValue = _hashTable;
-
-                    return helper.SqlGetDataTable(sql, helper.SpFileValue);
-                }
+                _hashTable[_matches[i].Value] = sqlParams[i];
             }
-            catch (Exception ex)
+
+            using (Txooo.TxDataHelper helper = Txooo.TxDataHelper.GetDataHelper(_dataBase))
             {
-                TxLogHelper.GetLogger("TxDataV2").Error(ex.Source + "|" + ex.TargetSite + "|" + ex.Message);
+                helper.SpFileValue = _hashTable;
 
-
+                return helper.SqlGetDataTable(sql, helper.SpFileValue);
             }
-            return null;
+
+        }
+
+        public void SqlDelete(string sql, params object[] sqlParams)
+        {
+
         }
     }
 }

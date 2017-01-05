@@ -69,6 +69,7 @@
     <Compile Include="UnitTest2.cs" />
     <Compile Include="UnitTest3.cs" />
     <Compile Include="UnitTest4.cs" />
+    <Compile Include="UnitTest5.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ZDL.AnyCodes\ZDL.AnyCodes.csproj">
@@ -78,6 +79,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="GenericTest1.GenericTest">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Tx.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
