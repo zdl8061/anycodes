@@ -7,6 +7,7 @@ using Txooo;
 using ZDL.AnyCodes;
 using System.Threading;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace UnitTestProject1
 {
@@ -82,5 +83,19 @@ namespace UnitTestProject1
             var _result = _client.FilterUserData("阿斯顿发送到发送到发斯蒂芬买卖枪支飞飞2323让3");
         }
 
+        [TestMethod]
+        public void TestMethod4()
+        {
+            string _s = "<title>fefeffe</title>";
+
+            var _match = Regex.Match(_s, "(?<=<title>).*(?=</title>)");
+
+            string _v = _match.Value;
+
+
+            _s = "@p @@p @@@p p";
+            _match = _match = Regex.Match(_s, "@(?!@)\\w");
+            _v = _match.Value;
+        }
     }
 }

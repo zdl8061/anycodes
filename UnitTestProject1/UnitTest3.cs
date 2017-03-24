@@ -63,9 +63,9 @@ namespace UnitTestProject1
 
             var s = HttpUtility.ParseQueryString(_str);
 
-            var d = s.AllKeys.ToDictionary(k => k, k => s[k]);
+            //var d = s.AllKeys.ToDictionary(k => k, k => s[k]);
 
-            var _r = JsonConvert.SerializeObject(d);
+            var _r = JsonConvert.SerializeObject(s);
         }
 
         [TestMethod]
