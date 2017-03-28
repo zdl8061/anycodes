@@ -93,7 +93,7 @@ namespace UnitTestProject1
             string _v = _match.Value;
 
 
-            _s = "@p @@p @@@p p";
+            _s = "@a @@b @@@c d";
             _match = _match = Regex.Match(_s, "@(?!@)\\w");
             _v = _match.Value;
         }
