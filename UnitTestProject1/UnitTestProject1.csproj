@@ -40,8 +40,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json">
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -78,6 +79,10 @@
     <Compile Include="UnitTest4.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\WebAPI\WebAPI.csproj">
+      <Project>{681bebb8-a1ae-4135-8e02-7509d62c00cc}</Project>
+      <Name>WebAPI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ZDL.AnyCodes\ZDL.AnyCodes.csproj">
       <Project>{d4f63af1-dcec-44a5-84cb-bb06485a75b3}</Project>
       <Name>ZDL.AnyCodes</Name>
