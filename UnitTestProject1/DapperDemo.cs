@@ -7,6 +7,8 @@ using Dapper;
 using System.Linq;
 using Txooo;
 using System.Data.Linq.Mapping;
+using System.Runtime.CompilerServices;
+using System.Diagnostics;
 
 namespace UnitTestProject1
 {
@@ -241,6 +243,14 @@ FROM   dbo.CICUser c WITH(NOLOCK)
 
             Console.ReadLine();
         }
+
+        public void TraceMessage(string message, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            Trace.WriteLine("message: " + message);
+            Trace.WriteLine("member name: " + memberName);
+            Trace.WriteLine("source file path: " + sourceFilePath);
+            Trace.WriteLine("source line number: " + sourceLineNumber);
+        }
     }
 
     public class User
@@ -249,7 +259,7 @@ FROM   dbo.CICUser c WITH(NOLOCK)
         {
             Role = new List<Role>();
         }
-        public int UserId { get; set; }
+        public int UserId { get; set; } = 32;
         public string UserName { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
@@ -259,6 +269,8 @@ FROM   dbo.CICUser c WITH(NOLOCK)
         public DateTime CreationDate { get; set; }
         public bool IsActive { get; set; }
         public List<Role> Role { get; set; }
+
+        string s5 = $"{DateTime.Now:yyyy-MM-dd}";
     }
     public class Role
     {
