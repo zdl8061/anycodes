@@ -6,6 +6,7 @@ using System.Data;
 using Dapper;
 using System.Linq;
 using Txooo;
+using System.Data.Linq.Mapping;
 
 namespace UnitTestProject1
 {
@@ -82,6 +83,10 @@ c.CreationDate,c.IsActive,r.RoleId,r.RoleName
     FROM dbo.CICUser c WITH(NOLOCK) 
 INNER JOIN CICUserRole cr ON cr.UserId = c.UserId 
 INNER JOIN CICRole r ON r.RoleId = cr.RoleId";
+
+
+               
+
                 userList = conn.Query<Customer, Role, Customer>(sqlCommandText,
                                                                 (user, role) => { user.Role = role; return user; },
                                                                 null,
@@ -101,6 +106,13 @@ INNER JOIN CICRole r ON r.RoleId = cr.RoleId";
 
                 Console.ReadLine();
             }
+        }
+
+        public static void CustomMapping<T>()
+        {
+            var map = new CustomPropertyTypeMap(typeof(T),
+                (type, columnName) => type.GetProperties().Where(prop => prop.GetCustomAttributes(false).OfType<ColumnAttribute>().Any(attr => attr.Name == columnName)).FirstOrDefault());
+            SqlMapper.SetTypeMap(typeof(T), map);
         }
 
         private static void OneToMany(string sqlConnectionString)
@@ -255,6 +267,7 @@ FROM   dbo.CICUser c WITH(NOLOCK)
     }
     public class Customer
     {
+        [Column(Name ="asdf")]
         public int UserId { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
