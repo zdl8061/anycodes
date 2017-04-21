@@ -12,72 +12,14 @@ using System.Diagnostics;
 
 namespace UnitTestProject1
 {
-    /// <summary>
-    /// DapperDemo 的摘要说明
-    /// </summary>
-    [TestClass]
     public class DapperDemo
     {
-        public DapperDemo()
-        {
-            //
-            //TODO:  在此处添加构造函数逻辑
-            //
-        }
 
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///获取或设置测试上下文，该上下文提供
-        ///有关当前测试运行及其功能的信息。
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
-
-        #region 附加测试特性
-        //
-        // 编写测试时，可以使用以下附加特性: 
-        //
-        // 在运行类中的第一个测试之前使用 ClassInitialize 运行代码
-        // [ClassInitialize()]
-        // public static void MyClassInitialize(TestContext testContext) { }
-        //
-        // 在类中的所有测试都已运行之后使用 ClassCleanup 运行代码
-        // [ClassCleanup()]
-        // public static void MyClassCleanup() { }
-        //
-        // 在运行每个测试之前，使用 TestInitialize 来运行代码
-        // [TestInitialize()]
-        // public void MyTestInitialize() { }
-        //
-        // 在每个测试运行完之后，使用 TestCleanup 来运行代码
-        // [TestCleanup()]
-        // public void MyTestCleanup() { }
-        //
-        #endregion
-
-        [TestMethod]
-        public void TestMethod1()
-        {
-            //
-            // TODO:  在此处添加测试逻辑
-            //
-        }
-
-        private static void OneToOne(string sqlConnectionString)
+        public static IEnumerable<Customer> OneToOne()
         {
             List<Customer> userList = new List<Customer>();
 
-            using (IDbConnection conn = TxDataHelper.GetDataHelper("TxoooCloud").DataConnection)
+            using (IDbConnection conn = TxDataHelper.GetDataHelper("DapperDemo").DataConnection)
             {
                 string sqlCommandText = @"SELECT c.UserId,c.Username AS UserName,
 c.PasswordHash AS [Password],c.Email,c.PhoneNumber,c.IsFirstTimeLogin,c.AccessFailedCount,
@@ -87,7 +29,7 @@ INNER JOIN CICUserRole cr ON cr.UserId = c.UserId
 INNER JOIN CICRole r ON r.RoleId = cr.RoleId";
 
 
-               
+
 
                 userList = conn.Query<Customer, Role, Customer>(sqlCommandText,
                                                                 (user, role) => { user.Role = role; return user; },
@@ -98,16 +40,7 @@ INNER JOIN CICRole r ON r.RoleId = cr.RoleId";
                                                                 null,
                                                                 null).ToList();
             }
-
-            if (userList.Count > 0)
-            {
-                userList.ForEach((item) => Console.WriteLine("UserName:" + item.UserName +
-                                                             "----Password:" + item.Password +
-                                                             "-----Role:" + item.Role.RoleName +
-                                                             "\n"));
-
-                Console.ReadLine();
-            }
+            return userList;
         }
 
         public static void CustomMapping<T>()
@@ -117,12 +50,12 @@ INNER JOIN CICRole r ON r.RoleId = cr.RoleId";
             SqlMapper.SetTypeMap(typeof(T), map);
         }
 
-        private static void OneToMany(string sqlConnectionString)
+        public static void OneToMany()
         {
             Console.WriteLine("One To Many");
             List<User> userList = new List<User>();
 
-            using (IDbConnection connection = TxDataHelper.GetDataHelper("TxoooCloud").DataConnection)
+            using (IDbConnection connection = TxDataHelper.GetDataHelper("DapperDemo").DataConnection)
             {
 
                 string sqlCommandText3 = @"SELECT c.UserId,
@@ -172,7 +105,7 @@ FROM   dbo.CICUser c WITH(NOLOCK)
             }
         }
 
-        public static void InsertObject(string sqlConnectionString)
+        public static void InsertObject()
         {
             string sqlCommandText = @"INSERT INTO CICUser(Username,PasswordHash,Email,PhoneNumber)VALUES(
     @UserName,
@@ -180,7 +113,7 @@ FROM   dbo.CICUser c WITH(NOLOCK)
     @Email,
     @PhoneNumber
 )";
-            using (IDbConnection conn = TxDataHelper.GetDataHelper("TxoooCloud").DataConnection)
+            using (IDbConnection conn = TxDataHelper.GetDataHelper("DapperDemo").DataConnection)
             {
                 User user = new User();
                 user.UserName = "Dapper";
@@ -205,10 +138,10 @@ FROM   dbo.CICUser c WITH(NOLOCK)
         /// Execute StoredProcedure and map result to POCO
         /// </summary>
         /// <param name="sqlConnnectionString"></param>
-        public static void ExecuteStoredProcedure(string sqlConnnectionString)
+        public static void ExecuteStoredProcedure()
         {
             List<User> users = new List<User>();
-            using (IDbConnection cnn = TxDataHelper.GetDataHelper("TxoooCloud").DataConnection)
+            using (IDbConnection cnn = TxDataHelper.GetDataHelper("DapperDemo").DataConnection)
             {
                 users = cnn.Query<User>("dbo.p_getUsers",
                                         new { UserId = 2 },
@@ -228,13 +161,13 @@ FROM   dbo.CICUser c WITH(NOLOCK)
         /// Execute StroedProcedure and get result from return value
         /// </summary>
         /// <param name="sqlConnnectionString"></param>
-        public static void ExecuteStoredProcedureWithParms(string sqlConnnectionString)
+        public static void ExecuteStoredProcedureWithParms()
         {
             DynamicParameters p = new DynamicParameters();
             p.Add("@UserName", "cooper");
             p.Add("@Password", "123456");
             p.Add("@LoginActionType", null, DbType.Int32, ParameterDirection.ReturnValue);
-            using (IDbConnection cnn = TxDataHelper.GetDataHelper("TxoooCloud").DataConnection)
+            using (IDbConnection cnn = TxDataHelper.GetDataHelper("DapperDemo").DataConnection)
             {
                 cnn.Execute("dbo.p_validateUser", p, null, null, CommandType.StoredProcedure);
                 int result = p.Get<int>("@LoginActionType");
@@ -259,7 +192,7 @@ FROM   dbo.CICUser c WITH(NOLOCK)
         {
             Role = new List<Role>();
         }
-        public int UserId { get; set; } = 32;
+        public int UserId { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
@@ -269,8 +202,6 @@ FROM   dbo.CICUser c WITH(NOLOCK)
         public DateTime CreationDate { get; set; }
         public bool IsActive { get; set; }
         public List<Role> Role { get; set; }
-
-        string s5 = $"{DateTime.Now:yyyy-MM-dd}";
     }
     public class Role
     {
@@ -279,7 +210,6 @@ FROM   dbo.CICUser c WITH(NOLOCK)
     }
     public class Customer
     {
-        [Column(Name ="asdf")]
         public int UserId { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
