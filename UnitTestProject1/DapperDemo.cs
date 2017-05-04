@@ -46,13 +46,12 @@ INNER JOIN CICRole r ON r.RoleId = cr.RoleId";
         public static void CustomMapping<T>()
         {
             var map = new CustomPropertyTypeMap(typeof(T),
-                (type, columnName) => type.GetProperties().Where(prop => prop.GetCustomAttributes(false).OfType<ColumnAttribute>().Any(attr => attr.Name == columnName)).FirstOrDefault());
+                (type, columnName) => type.GetProperties().Where(prop => prop.GetCustomAttributes(false).OfType<ColumnAttribute>().Any(attr => attr.Name.ToLower() == columnName.ToLower())).FirstOrDefault());
             SqlMapper.SetTypeMap(typeof(T), map);
         }
 
-        public static void OneToMany()
-        {
-            Console.WriteLine("One To Many");
+        public static IEnumerable<User> OneToMany()
+        {          
             List<User> userList = new List<User>();
 
             using (IDbConnection connection = TxDataHelper.GetDataHelper("DapperDemo").DataConnection)
@@ -90,19 +89,8 @@ FROM   dbo.CICUser c WITH(NOLOCK)
                 var result = lookUp.Values;
             }
 
-            if (userList.Count > 0)
-            {
-                userList.ForEach((item) => Console.WriteLine("UserName:" + item.UserName +
-                                             "----Password:" + item.Password +
-                                             "-----Role:" + item.Role.First().RoleName +
-                                             "\n"));
-
-                Console.ReadLine();
-            }
-            else
-            {
-                Console.WriteLine("No Data In UserList!");
-            }
+            return userList;
+          
         }
 
         public static void InsertObject()
