@@ -20,7 +20,7 @@ namespace WindowsService1
 
         protected override void OnStart(string[] args)
         {
-            FileStream fs = new FileStream(@"d:\xx.txt", FileMode.OpenOrCreate, FileAccess.Write);
+            FileStream fs = new FileStream(@"d:\开关机日志.txt", FileMode.OpenOrCreate, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
             sw.BaseStream.Seek(0, SeekOrigin.End);
             sw.WriteLine("WindowsService: Service Started" + DateTime.Now.ToString() + "\n");
@@ -32,7 +32,7 @@ namespace WindowsService1
 
         protected override void OnStop()
         {
-            FileStream fs = new FileStream(@"d:\xx.txt", FileMode.OpenOrCreate, FileAccess.Write);
+            FileStream fs = new FileStream(@"d:\开关机日志.txt", FileMode.OpenOrCreate, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
             sw.BaseStream.Seek(0, SeekOrigin.End);
             sw.WriteLine("WindowsService: Service Stopped" + DateTime.Now.ToString() + "\n");
