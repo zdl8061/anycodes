@@ -15,28 +15,30 @@ namespace UnitTestProject1
     public class DapperDemo
     {
 
-        public static IEnumerable<Customer> OneToOne()
+        public static IEnumerable<CustomerInfo> OneToOne()
         {
-            List<Customer> userList = new List<Customer>();
+            CustomMapping<UserInfo>();
+            CustomMapping<CustomerInfo>();
+            CustomMapping<PermissionInfo>();
+
+            List<CustomerInfo> userList = new List<CustomerInfo>();
 
             using (IDbConnection conn = TxDataHelper.GetDataHelper("DapperDemo").DataConnection)
             {
-                string sqlCommandText = @"SELECT c.UserId,c.Username AS UserName,
-c.PasswordHash AS [Password],c.Email,c.PhoneNumber,c.IsFirstTimeLogin,c.AccessFailedCount,
-c.CreationDate,c.IsActive,r.RoleId,r.RoleName 
-    FROM dbo.CICUser c WITH(NOLOCK) 
-INNER JOIN CICUserRole cr ON cr.UserId = c.UserId 
-INNER JOIN CICRole r ON r.RoleId = cr.RoleId";
+                string sqlCommandText = @"SELECT A.*,C.*
+                                          FROM [dbo].[Users] A
+                                          INNER JOIN [dbo].[UserPermissions] B
+                                          ON A.user_id=B.userid
+                                          INNER JOIN [dbo].[Permissions] C
+                                          ON B.perm_id=C.perm_id";
 
 
-
-
-                userList = conn.Query<Customer, Role, Customer>(sqlCommandText,
-                                                                (user, role) => { user.Role = role; return user; },
+                userList = conn.Query<CustomerInfo, PermissionInfo, CustomerInfo>(sqlCommandText,
+                                                                (user, perm) => { user.Permission = perm; return user; },
                                                                 null,
                                                                 null,
                                                                 true,
-                                                                "RoleId",
+                                                                "perm_id",
                                                                 null,
                                                                 null).ToList();
             }
@@ -50,100 +52,100 @@ INNER JOIN CICRole r ON r.RoleId = cr.RoleId";
             SqlMapper.SetTypeMap(typeof(T), map);
         }
 
-        public static IEnumerable<User> OneToMany()
-        {          
-            List<User> userList = new List<User>();
+        //        public static IEnumerable<UserInfo> OneToMany()
+        //        {
+        //            List<UserInfo> userList = new List<UserInfo>();
 
-            using (IDbConnection connection = TxDataHelper.GetDataHelper("DapperDemo").DataConnection)
-            {
+        //            using (IDbConnection connection = TxDataHelper.GetDataHelper("DapperDemo").DataConnection)
+        //            {
 
-                string sqlCommandText3 = @"SELECT c.UserId,
-       c.Username      AS UserName,
-       c.PasswordHash  AS [Password],
-       c.Email,
-       c.PhoneNumber,
-       c.IsFirstTimeLogin,
-       c.AccessFailedCount,
-       c.CreationDate,
-       c.IsActive,
-       r.RoleId,
-       r.RoleName
-FROM   dbo.CICUser c WITH(NOLOCK)
-       LEFT JOIN CICUserRole cr
-            ON  cr.UserId = c.UserId
-       LEFT JOIN CICRole r
-            ON  r.RoleId = cr.RoleId";
+        //                string sqlCommandText3 = @"SELECT c.UserId,
+        //       c.Username      AS UserName,
+        //       c.PasswordHash  AS [Password],
+        //       c.Email,
+        //       c.PhoneNumber,
+        //       c.IsFirstTimeLogin,
+        //       c.AccessFailedCount,
+        //       c.CreationDate,
+        //       c.IsActive,
+        //       r.RoleId,
+        //       r.RoleName
+        //FROM   dbo.CICUser c WITH(NOLOCK)
+        //       LEFT JOIN CICUserRole cr
+        //            ON  cr.UserId = c.UserId
+        //       LEFT JOIN CICRole r
+        //            ON  r.RoleId = cr.RoleId";
 
-                var lookUp = new Dictionary<int, User>();
-                userList = connection.Query<User, Role, User>(sqlCommandText3,
-                    (user, role) =>
-                    {
-                        User u;
-                        if (!lookUp.TryGetValue(user.UserId, out u))
-                        {
-                            lookUp.Add(user.UserId, u = user);
-                        }
-                        u.Role.Add(role);
-                        return user;
-                    }, null, null, true, "RoleId", null, null).ToList();
-                var result = lookUp.Values;
-            }
+        //                var lookUp = new Dictionary<int, UserInfo>();
+        //                userList = connection.Query<UserInfo, PermissionInfo, UserInfo>(sqlCommandText3,
+        //                    (user, role) =>
+        //                    {
+        //                        UserInfo u;
+        //                        if (!lookUp.TryGetValue(user.UserId, out u))
+        //                        {
+        //                            lookUp.Add(user.UserId, u = user);
+        //                        }
+        //                        u.Role.Add(role);
+        //                        return user;
+        //                    }, null, null, true, "RoleId", null, null).ToList();
+        //                var result = lookUp.Values;
+        //            }
 
-            return userList;
-          
-        }
+        //            return userList;
 
-        public static void InsertObject()
-        {
-            string sqlCommandText = @"INSERT INTO CICUser(Username,PasswordHash,Email,PhoneNumber)VALUES(
-    @UserName,
-    @Password,
-    @Email,
-    @PhoneNumber
-)";
-            using (IDbConnection conn = TxDataHelper.GetDataHelper("DapperDemo").DataConnection)
-            {
-                User user = new User();
-                user.UserName = "Dapper";
-                user.Password = "654321";
-                user.Email = "Dapper@infosys.com";
-                user.PhoneNumber = "13795666243";
-                int result = conn.Execute(sqlCommandText, user);
-                if (result > 0)
-                {
-                    Console.WriteLine("Data have already inserted into DB!");
-                }
-                else
-                {
-                    Console.WriteLine("Insert Failed!");
-                }
+        //        }
 
-                Console.ReadLine();
-            }
-        }
+        //        public static void InsertObject()
+        //        {
+        //            string sqlCommandText = @"INSERT INTO CICUser(Username,PasswordHash,Email,PhoneNumber)VALUES(
+        //    @UserName,
+        //    @Password,
+        //    @Email,
+        //    @PhoneNumber
+        //)";
+        //            using (IDbConnection conn = TxDataHelper.GetDataHelper("DapperDemo").DataConnection)
+        //            {
+        //                UserInfo user = new UserInfo();
+        //                user.UserName = "Dapper";
+        //                user.Password = "654321";
+        //                user.Email = "Dapper@infosys.com";
+        //                user.PhoneNumber = "13795666243";
+        //                int result = conn.Execute(sqlCommandText, user);
+        //                if (result > 0)
+        //                {
+        //                    Console.WriteLine("Data have already inserted into DB!");
+        //                }
+        //                else
+        //                {
+        //                    Console.WriteLine("Insert Failed!");
+        //                }
 
-        /// <summary>
-        /// Execute StoredProcedure and map result to POCO
-        /// </summary>
-        /// <param name="sqlConnnectionString"></param>
-        public static void ExecuteStoredProcedure()
-        {
-            List<User> users = new List<User>();
-            using (IDbConnection cnn = TxDataHelper.GetDataHelper("DapperDemo").DataConnection)
-            {
-                users = cnn.Query<User>("dbo.p_getUsers",
-                                        new { UserId = 2 },
-                                        null,
-                                        true,
-                                        null,
-                                        CommandType.StoredProcedure).ToList();
-            }
-            if (users.Count > 0)
-            {
-                users.ForEach((user) => Console.WriteLine(user.UserName + "\n"));
-            }
-            Console.ReadLine();
-        }
+        //                Console.ReadLine();
+        //            }
+        //        }
+
+        //        /// <summary>
+        //        /// Execute StoredProcedure and map result to POCO
+        //        /// </summary>
+        //        /// <param name="sqlConnnectionString"></param>
+        //        public static void ExecuteStoredProcedure()
+        //        {
+        //            List<UserInfo> users = new List<UserInfo>();
+        //            using (IDbConnection cnn = TxDataHelper.GetDataHelper("DapperDemo").DataConnection)
+        //            {
+        //                users = cnn.Query<UserInfo>("dbo.p_getUsers",
+        //                                        new { UserId = 2 },
+        //                                        null,
+        //                                        true,
+        //                                        null,
+        //                                        CommandType.StoredProcedure).ToList();
+        //            }
+        //            if (users.Count > 0)
+        //            {
+        //                users.ForEach((user) => Console.WriteLine(user.UserName + "\n"));
+        //            }
+        //            Console.ReadLine();
+        //        }
 
         /// <summary>
         /// Execute StroedProcedure and get result from return value
@@ -174,39 +176,93 @@ FROM   dbo.CICUser c WITH(NOLOCK)
         }
     }
 
-    public class User
+    public class UserInfo
     {
-        public User()
+        public UserInfo()
         {
-            Role = new List<Role>();
+            Perms = new List<PermissionInfo>();
         }
+
+        /// <summary> 
+        ///   
+        /// </summary> 
+        [Column(Name = "user_id")]
         public int UserId { get; set; }
-        public string UserName { get; set; }
-        public string Password { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public bool IsFirstTimeLogin { get; set; }
-        public int AccessFailedCount { get; set; }
-        public DateTime CreationDate { get; set; }
-        public bool IsActive { get; set; }
-        public List<Role> Role { get; set; }
+
+        /// <summary> 
+        ///   
+        /// </summary> 
+        [Column(Name = "user_name")]
+        public string Username { get; set; }
+
+        /// <summary> 
+        ///   
+        /// </summary> 
+        [Column(Name = "user_pwd")]
+        public string Userpwd { get; set; }
+
+        /// <summary> 
+        ///   
+        /// </summary> 
+        [Column(Name = "reg_time")]
+        public DateTime Regtime { get; set; }
+
+
+        public List<PermissionInfo> Perms { get; set; }
     }
-    public class Role
+
+    public class PermissionInfo
     {
-        public int RoleId { get; set; }
-        public string RoleName { get; set; }
+        /// <summary> 
+        ///   
+        /// </summary> 
+        [Column(Name = "perm_id")]
+        public int PermId { get; set; }
+
+        /// <summary> 
+        ///   
+        /// </summary> 
+        [Column(Name = "perm_name")]
+        public string PermName { get; set; }
+
+        /// <summary> 
+        ///   
+        /// </summary> 
+        [Column(Name = "perm_url")]
+        public string PermUrl { get; set; }
+
+        /// <summary> 
+        ///   
+        /// </summary> 
+        [Column(Name = "add_time")]
+        public DateTime AddTime { get; set; }
     }
-    public class Customer
+    public class CustomerInfo 
     {
+        /// <summary> 
+        ///   
+        /// </summary> 
+        [Column(Name = "user_id")]
         public int UserId { get; set; }
-        public string UserName { get; set; }
-        public string Password { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public bool IsFirstTimeLogin { get; set; }
-        public int AccessFailedCount { get; set; }
-        public DateTime CreationDate { get; set; }
-        public bool IsActive { get; set; }
-        public Role Role { get; set; }
+
+        /// <summary> 
+        ///   
+        /// </summary> 
+        [Column(Name = "user_name")]
+        public string Username { get; set; }
+
+        /// <summary> 
+        ///   
+        /// </summary> 
+        [Column(Name = "user_pwd")]
+        public string Userpwd { get; set; }
+
+        /// <summary> 
+        ///   
+        /// </summary> 
+        [Column(Name = "reg_time")]
+        public DateTime Regtime { get; set; }
+
+        public PermissionInfo Permission { get; set; }
     }
 }

@@ -9,9 +9,9 @@ namespace UnitTestProject1
         [TestMethod]
         public void TestMethod1()
         {
-            //var _result = DapperDemo.OneToOne();
+            var _result = DapperDemo.OneToOne();
 
-            var _result2 = DapperDemo.OneToMany();
+            //var _result2 = DapperDemo.OneToMany();
         }
     }
 }
