@@ -34,8 +34,7 @@ namespace ZDL.AnyCodes.Task
 
             if (_isOk)
             {
-                if(OnFinish!=null)
-                OnFinish(this, new EventArgs());
+                OnFinish?.Invoke(this, new EventArgs());
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 
 namespace UnitTestProject1
 {
@@ -12,6 +13,8 @@ namespace UnitTestProject1
             var _result = DapperDemo.OneToOne();
 
             //var _result2 = DapperDemo.OneToMany();
+
+            var _json = JsonConvert.SerializeObject(_result);
         }
     }
 }

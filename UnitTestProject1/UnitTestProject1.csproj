@@ -93,6 +93,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="dapperDB\DapperDemo.rar" />
     <None Include="GenericTest1.GenericTest">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
