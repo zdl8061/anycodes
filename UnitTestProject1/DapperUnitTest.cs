@@ -12,9 +12,13 @@ namespace UnitTestProject1
         {
             var _result = DapperDemo.OneToOne();
 
-            //var _result2 = DapperDemo.OneToMany();
+            var _result2 = DapperDemo.OneToMany();
 
-            var _json = JsonConvert.SerializeObject(_result);
+            //var _result3 = DapperDemo.InsertObject();
+
+            var _result4 = DapperDemo.GetPager(null, null, 1);
+
+            var _json = JsonConvert.SerializeObject(_result4);
         }
     }
 }

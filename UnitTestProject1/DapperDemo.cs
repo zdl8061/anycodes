@@ -14,12 +14,19 @@ namespace UnitTestProject1
 {
     public class DapperDemo
     {
-
-        public static IEnumerable<CustomerInfo> OneToOne()
+        static DapperDemo()
         {
             CustomMapping<UserInfo>();
             CustomMapping<CustomerInfo>();
             CustomMapping<PermissionInfo>();
+        }
+
+        /// <summary>
+        /// 只适用1对1，对多时会重复数据
+        /// </summary>
+        /// <returns></returns>
+        public static IEnumerable<CustomerInfo> OneToOne()
+        {
 
             List<CustomerInfo> userList = new List<CustomerInfo>();
 
@@ -52,100 +59,77 @@ namespace UnitTestProject1
             SqlMapper.SetTypeMap(typeof(T), map);
         }
 
-        //        public static IEnumerable<UserInfo> OneToMany()
-        //        {
-        //            List<UserInfo> userList = new List<UserInfo>();
+        /// <summary>
+        /// 一对多
+        /// </summary>
+        /// <returns></returns>
+        public static IEnumerable<UserInfo> OneToMany()
+        {
+            List<UserInfo> userList = new List<UserInfo>();
 
-        //            using (IDbConnection connection = TxDataHelper.GetDataHelper("DapperDemo").DataConnection)
-        //            {
+            using (IDbConnection connection = TxDataHelper.GetDataHelper("DapperDemo").DataConnection)
+            {
 
-        //                string sqlCommandText3 = @"SELECT c.UserId,
-        //       c.Username      AS UserName,
-        //       c.PasswordHash  AS [Password],
-        //       c.Email,
-        //       c.PhoneNumber,
-        //       c.IsFirstTimeLogin,
-        //       c.AccessFailedCount,
-        //       c.CreationDate,
-        //       c.IsActive,
-        //       r.RoleId,
-        //       r.RoleName
-        //FROM   dbo.CICUser c WITH(NOLOCK)
-        //       LEFT JOIN CICUserRole cr
-        //            ON  cr.UserId = c.UserId
-        //       LEFT JOIN CICRole r
-        //            ON  r.RoleId = cr.RoleId";
+                string sqlCommandText3 = @"SELECT A.*,C.*
+                                          FROM [dbo].[Users] A
+                                          INNER JOIN [dbo].[UserPermissions] B
+                                          ON A.user_id=B.userid
+                                          INNER JOIN [dbo].[Permissions] C
+                                          ON B.perm_id=C.perm_id";
 
-        //                var lookUp = new Dictionary<int, UserInfo>();
-        //                userList = connection.Query<UserInfo, PermissionInfo, UserInfo>(sqlCommandText3,
-        //                    (user, role) =>
-        //                    {
-        //                        UserInfo u;
-        //                        if (!lookUp.TryGetValue(user.UserId, out u))
-        //                        {
-        //                            lookUp.Add(user.UserId, u = user);
-        //                        }
-        //                        u.Role.Add(role);
-        //                        return user;
-        //                    }, null, null, true, "RoleId", null, null).ToList();
-        //                var result = lookUp.Values;
-        //            }
+                var lookUp = new Dictionary<int, UserInfo>();
+                userList = connection.Query<UserInfo, PermissionInfo, UserInfo>(sqlCommandText3,
+                    (user, perm) =>
+                    {
+                        UserInfo u;
+                        if (!lookUp.TryGetValue(user.UserId, out u))
+                        {
+                            lookUp.Add(user.UserId, u = user);
+                        }
+                        u.Perms.Add(perm);
+                        return user;
+                    }, null, null, true, "perm_id", null, null).ToList();
+                return lookUp.Values;
+            }
+        }
 
-        //            return userList;
+        /// <summary>
+        /// 插入数据参数名必须和属性名相同
+        /// </summary>
+        public static int InsertObject()
+        {
+            string sqlCommandText = @"INSERT INTO [dbo].[Users] ([user_name] ,[user_pwd] ,[reg_time]) VALUES (@username ,@userpwd ,@regtime)";
 
-        //        }
+            using (IDbConnection conn = TxDataHelper.GetDataHelper("DapperDemo").DataConnection)
+            {
+                UserInfo user = new UserInfo();
+                user.Username = "Dapper";
+                user.Userpwd = "654321";
+                user.Regtime = DateTime.Now;
 
-        //        public static void InsertObject()
-        //        {
-        //            string sqlCommandText = @"INSERT INTO CICUser(Username,PasswordHash,Email,PhoneNumber)VALUES(
-        //    @UserName,
-        //    @Password,
-        //    @Email,
-        //    @PhoneNumber
-        //)";
-        //            using (IDbConnection conn = TxDataHelper.GetDataHelper("DapperDemo").DataConnection)
-        //            {
-        //                UserInfo user = new UserInfo();
-        //                user.UserName = "Dapper";
-        //                user.Password = "654321";
-        //                user.Email = "Dapper@infosys.com";
-        //                user.PhoneNumber = "13795666243";
-        //                int result = conn.Execute(sqlCommandText, user);
-        //                if (result > 0)
-        //                {
-        //                    Console.WriteLine("Data have already inserted into DB!");
-        //                }
-        //                else
-        //                {
-        //                    Console.WriteLine("Insert Failed!");
-        //                }
+                int result = conn.Execute(sqlCommandText, user);
+                return result;
+            }
+        }
 
-        //                Console.ReadLine();
-        //            }
-        //        }
-
-        //        /// <summary>
-        //        /// Execute StoredProcedure and map result to POCO
-        //        /// </summary>
-        //        /// <param name="sqlConnnectionString"></param>
-        //        public static void ExecuteStoredProcedure()
-        //        {
-        //            List<UserInfo> users = new List<UserInfo>();
-        //            using (IDbConnection cnn = TxDataHelper.GetDataHelper("DapperDemo").DataConnection)
-        //            {
-        //                users = cnn.Query<UserInfo>("dbo.p_getUsers",
-        //                                        new { UserId = 2 },
-        //                                        null,
-        //                                        true,
-        //                                        null,
-        //                                        CommandType.StoredProcedure).ToList();
-        //            }
-        //            if (users.Count > 0)
-        //            {
-        //                users.ForEach((user) => Console.WriteLine(user.UserName + "\n"));
-        //            }
-        //            Console.ReadLine();
-        //        }
+        /// <summary>
+        /// 执行存储过程
+        /// </summary>
+        /// <param name="sqlConnnectionString"></param>
+        public static IEnumerable<UserInfo> ExecuteStoredProcedure()
+        {
+            List<UserInfo> users = new List<UserInfo>();
+            using (IDbConnection cnn = TxDataHelper.GetDataHelper("DapperDemo").DataConnection)
+            {
+                users = cnn.Query<UserInfo>("dbo.p_getUsers",
+                                        new { UserId = 2 },
+                                        null,
+                                        true,
+                                        null,
+                                        CommandType.StoredProcedure).ToList();
+            }
+            return users;
+        }
 
         /// <summary>
         /// Execute StroedProcedure and get result from return value
@@ -165,6 +149,31 @@ namespace UnitTestProject1
             }
 
             Console.ReadLine();
+        }
+
+        /// <summary>
+        /// 分页
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="loginName"></param>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public static PageDataView<UserInfo> GetPager(string name, string loginName, int page, int pageSize = 10)
+        {
+            PageCriteria criteria = new PageCriteria();
+            criteria.Condition = "1=1";
+            if (!string.IsNullOrEmpty(name))
+                criteria.Condition += string.Format(" and Name like '%{0}%'", name);
+            if (!string.IsNullOrEmpty(loginName))
+                criteria.Condition += string.Format(" and LoginName like '%{0}%'", loginName);
+            criteria.CurrentPage = page;
+            criteria.Fields = "*";
+            criteria.PageSize = pageSize;
+            criteria.TableName = "[Users] A";
+            criteria.PrimaryKey = "user_id";
+            var r = Common.GetPageData<UserInfo>("DapperDemo", criteria);
+            return r;
         }
 
         public void TraceMessage(string message, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
@@ -237,7 +246,7 @@ namespace UnitTestProject1
         [Column(Name = "add_time")]
         public DateTime AddTime { get; set; }
     }
-    public class CustomerInfo 
+    public class CustomerInfo
     {
         /// <summary> 
         ///   
