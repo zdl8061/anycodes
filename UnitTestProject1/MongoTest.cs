@@ -12,30 +12,32 @@ namespace UnitTestProject1
         public void TestMethod1()
         {
             var connectionString = "127.0.0.1";
-            var server = MongoHelper<Entity>.GetDBInstance(connectionString);
-            var database = server.GetDatabase("test");
-            var collection = database.GetCollection<Entity>("entities");
+            var server = MongoHelper<User>.GetDBInstance(connectionString);
+            var database = server.GetDatabase("nodetest1");
+            var collection = database.GetCollection<User>("usercollection");
 
-            var entity = new Entity { Name = "Tom" };
+            var entity = new User { Username = "Tom" , Email="tom@sina.com"};
             collection.Insert(entity);
             var id = entity.Id;
 
             var query = Query.EQ("_id", id);
             entity = collection.FindOne(query);
 
-            entity.Name = "Dick";
+            entity.Username = "Dick";
             collection.Save(entity);
 
-            var update = Update.Set("Name", "Harry");
+            var update = Update.Set("Username", "Harry");
             collection.Update(query, update);
 
             collection.Remove(query);
         }
     }
 
-    public class Entity
+    public class User
     {
         public ObjectId Id { get; set; }
-        public string Name { get; set; }
+        public string Username { get; set; }
+
+        public string Email { get; set; }
     }
 }
