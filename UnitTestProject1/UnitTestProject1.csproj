@@ -86,6 +86,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="AppBmPush\Domain\Entities\ClueInfo.cs" />
+    <Compile Include="AppBmPush\Domain\Entities\PushConfig.cs" />
+    <Compile Include="AppBmPush\Domain\Entities\PushMsgInfo.cs" />
+    <Compile Include="AppBmPush\UnitTest1.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="DapperDemo.cs" />
     <Compile Include="MongoHelper.cs" />
@@ -122,6 +126,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="dapperDB\SqlCommonPager.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="AppBmPush\Domain\Repositories\" />
+    <Folder Include="AppBmPush\Domain\Services\" />
+    <Folder Include="AppBmPush\NewFolder1\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
