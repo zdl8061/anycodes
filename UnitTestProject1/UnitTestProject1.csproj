@@ -89,6 +89,9 @@
     <Compile Include="AppBmPush\Domain\Entities\ClueInfo.cs" />
     <Compile Include="AppBmPush\Domain\Entities\PushConfig.cs" />
     <Compile Include="AppBmPush\Domain\Entities\PushMsgInfo.cs" />
+    <Compile Include="AppBmPush\Domain\Services\ClueManager.cs" />
+    <Compile Include="AppBmPush\Persistence\ClueRepository.cs" />
+    <Compile Include="AppBmPush\Persistence\IRepository.cs" />
     <Compile Include="AppBmPush\UnitTest1.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="DapperDemo.cs" />
@@ -127,11 +130,7 @@
   <ItemGroup>
     <Content Include="dapperDB\SqlCommonPager.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="AppBmPush\Domain\Repositories\" />
-    <Folder Include="AppBmPush\Domain\Services\" />
-    <Folder Include="AppBmPush\NewFolder1\" />
-  </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

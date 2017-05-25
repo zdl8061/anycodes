@@ -10,7 +10,7 @@ namespace UnitTestProject1.AppBmPush
         [TestMethod]
         public void TestMethod1()
         {
-            IList<ClueInfo> _clueList =
+           
         }
     }
 }

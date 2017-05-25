@@ -17,5 +17,15 @@ namespace UnitTestProject1.AppBmPush
         public int OutType { get; set; }
 
         public DateTime OutTime { get; set; }
+
+        
+        public bool IsPush() {
+            return false;
+        }
+
+        public string ToMobileMsg()
+        {
+            return "";
+        }
     }
 }
