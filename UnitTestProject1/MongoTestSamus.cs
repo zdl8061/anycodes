@@ -14,25 +14,14 @@ namespace UnitTestProject1
         [TestMethod]
         public void TestMethod1()
         {
-            var _chat = new ChatInfo()
-            {
-                Name = "asdf",
-                Email = "hu2@dsf.com",
-                Level = 2,
-                Link = new LinkInfo()
-                {
-                    Family = "fengtaiqu ",
-                    Mobile = "13563212254"
-                },
-                LinkCols = new List<LinkInfo>()
-                {
-                    new LinkInfo{  Family="lskdjfie", Mobile="15325632125"},
-                    new LinkInfo{ Family="erjoeijrgeerog", Mobile="18654512215"}
-                }
-            };
+            string _data = "{\"MsgBody\":[{\"MsgType\":\"TIMTextElem\",\"MsgContent\":{\"Text\":\"fasdfdsfdsf\"}},{\"MsgType\":\"TIMFaceElem\",\"MsgContent\":{\"Index\":3,\"Data\":\"[发呆]\"}},{\"MsgType\":\"TIMTextElem\",\"MsgContent\":{\"Text\":\"nexid = 2 & brandid = 2 & dialogid = \"}}],\"CallbackCommand\":\"C2C.CallbackAfterSendMsg\",\"From_Account\":\"VISITOR_11\",\"To_Account\":\"TXUSER_235500\",\"MsgTime\":1495788601}";
+
+            var _chat = JsonConvert.DeserializeObject<ChatInfo>(_data);
 
            
             MongoHelper.InsertOne<ChatInfo>("chatlog", _chat);
+
+            var _c = MongoHelper.GetOne<ChatInfo>("chatlog", new Document("To_Account", "TXUSER_235500"));
 
             //var _json = JObject.Parse(JsonConvert.SerializeObject(_chat));
 
@@ -40,25 +29,27 @@ namespace UnitTestProject1
 
             //MongoHelper.InsertOne<Document>("chatlog", _doc);
         }
-    }
+    }   
 
     public class ChatInfo
     {
-        public string Name { get; set; }
+        public IList<MsgBodyInfo> MsgBody { get; set; }
+        public string CallbackCommand { get; set; }
+        public string From_Account { get; set; }
+        public string To_Account { get; set; }
+        public int MsgTime { get; set; }
 
-        public string Email { get; set; }
+        public class MsgContentInfo
+        {
+            public string Text { get; set; }
+            public int? Index { get; set; }
+            public string Data { get; set; }
+        }
 
-        public int Level { get; set; }
-
-        public LinkInfo Link { get; set; }
-
-        public IList<LinkInfo> LinkCols { get; set; }
-    }
-
-    public class LinkInfo
-    {
-        public string Mobile { get; set; }
-
-        public string Family { get; set; }
+        public class MsgBodyInfo
+        {
+            public string MsgType { get; set; }
+            public MsgContentInfo MsgContent { get; set; }
+        }
     }
 }
