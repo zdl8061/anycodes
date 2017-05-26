@@ -1,10 +1,10 @@
 ﻿/*----------------------------------------------------------------
  *  Copyright (C) 2015 天下商机（txooo.com）版权所有
  * 
- *  文 件 名：MongoHelper
+ *  文 件 名：Class1
  *  所属项目：
  *  创建用户：张德良
- *  创建时间：2017/5/17 星期三 下午 15:31:42
+ *  创建时间：2017/5/26 星期五 下午 13:08:56
  *  
  *  功能描述：
  *          1、
@@ -15,226 +15,264 @@
  *  待 完 善：
  *          1、 
 ----------------------------------------------------------------*/
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using MongoDB;
+
 namespace UnitTestProject1
 {
-    using System;  
-    using MongoDB.Bson;  
-    using MongoDB.Driver;
-    using MongoDB.Driver.Builders;
-    using System.Collections;  
-    using System.Linq;  
-    using System.Collections.Generic;  
-  
-    public sealed class MongoHelper<TClass> : IDisposable
-{
-    private static volatile MongoHelper<TClass> instance = null;
-    public Boolean IsDisposed { get; private set; }
-    private static object threadSafeLocker = new object();
-    private MongoServer DBServer = null;
-
-    private MongoHelper(MongoServerSettings server_settings)
+    public class MongoHelper
     {
-        DBServer = new MongoServer(server_settings);
-        if (DBServer.State != MongoServerState.Connected)
-            DBServer.Connect();
-    }
+        public static readonly string connectionString = "Servers=127.0.0.1:27017;ConnectTimeout=30000;ConnectionLifetime=300000;MinimumPoolSize=8;MaximumPoolSize=256;Pooled=true";
+        public static readonly string database = "TxIM";
 
-    public static MongoHelper<TClass> GetDBInstance(string serviceInfo)
-    {
-        if (null == instance)
+        #region 新增
+        /// <summary>
+        /// 插入新数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collectionName"></param>
+        /// <param name="entiry"></param>
+        public static void InsertOne<T>(string collectionName, T entity) where T : class
         {
-            lock (threadSafeLocker)
+            using (Mongo mongo = new Mongo(connectionString))
             {
-                if (null == instance || instance.IsDisposed || instance.DBServer.State != MongoServerState.Connected)
-                {
-                    List<MongoServerAddress> slist = new List<MongoServerAddress>();
-                    MongoServerAddress def = new MongoServerAddress(serviceInfo, 27017);
-                    slist.Add(def);
-                    MongoServerSettings settings = new MongoServerSettings();
-                    settings.ConnectionMode = ConnectionMode.Direct;
-                    settings.ConnectTimeout = TimeSpan.FromSeconds(30);
-                    settings.GuidRepresentation = GuidRepresentation.CSharpLegacy;
-                    settings.IPv6 = false;
-                    settings.MaxConnectionIdleTime = TimeSpan.FromMinutes(10);
-                    settings.MaxConnectionLifeTime = TimeSpan.FromMinutes(30);
-                    settings.MaxConnectionPoolSize = 100;
-                    settings.MinConnectionPoolSize = 0;
-                    //settings.SafeMode = new SafeMode(true);
-                    settings.Servers = slist.Cast<MongoServerAddress>();
-                    //settings.SlaveOk = true;
-                    settings.SocketTimeout = TimeSpan.FromSeconds(30);
-                    settings.WaitQueueSize = 250;
-                    settings.WaitQueueTimeout = TimeSpan.FromMilliseconds(500);
-                    instance = new MongoHelper<TClass>(settings);
-                }
+                mongo.Connect();
+                IMongoDatabase friends = mongo.GetDatabase(database);
+                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
+                categories.Insert(entity, true);
+                mongo.Disconnect();
+
             }
         }
-
-        return instance;
-    }
-
-    public long Count(String database_name
-        , String collection_name
-        , IMongoQuery query)
-    {
-        return instance.DBServer.GetDatabase(database_name)
-            .GetCollection<TClass>(collection_name)
-            .Count(query);
-    }
-
-    public TClass FindOneById(String database_name
-        , String collection_name
-        , BsonValue id)
-    {
-        return instance.DBServer.GetDatabase(database_name)
-            .GetCollection<TClass>(collection_name)
-            .FindOneByIdAs<TClass>(id);
-    }
-
-    public TClass FindOne(String database_name
-        , String collection_name
-        , IMongoQuery query)
-    {
-        return instance.DBServer.GetDatabase(database_name)
-            .GetCollection<TClass>(collection_name)
-            .FindOneAs<TClass>(query);
-    }
-
-
-    public MongoCursor<TClass> FindAll(String database_name
-        , String collection_name
-        , IMongoQuery query)
-    {
-        return instance.DBServer.GetDatabase(database_name)
-            .GetCollection<TClass>(collection_name)
-            .FindAs<TClass>(query);
-    }
-
-    public MongoCursor<TClass> FindPage(String database_name
-        , String collection_name
-        , IMongoQuery query
-        , IMongoSortBy sortby
-        , int pageIndex
-        , int pageSize)
-    {
-        MongoCursor<TClass> cursor = instance.DBServer.GetDatabase(database_name)
-            .GetCollection<TClass>(collection_name)
-            .Find(query)
-            .SetSortOrder(sortby);
-        cursor.Skip = pageIndex * pageSize;
-        cursor.Limit = pageSize;
-        return cursor;
-    }
-
-
-
-    public bool IsExists(String database_name
-        , String collection_name
-        , IMongoQuery query)
-    {
-        return instance.DBServer.GetDatabase(database_name)
-            .GetCollection<TClass>(collection_name)
-            .Count(query) > 0;
-    }
-
-    //public SafeModeResult Remove(String database_name
-    //    , String collection_name
-    //    , IMongoQuery query)
-    //{
-    //    return Remove(database_name
-    //        , collection_name
-    //        , Query.And(query)
-    //        );
-    //}
-
-    //public SafeModeResult RemoveById(String database_name
-    //    , String collection_name
-    //    , BsonValue id)
-    //{
-    //    return Remove(database_name
-    //        , collection_name
-    //        , Query.EQ("_id", id));
-    //}
-
-    //public SafeModeResult RemoveAll(String database_name
-    //    , String collection_name)
-    //{
-    //    SafeModeResult result = instance.DBServer.GetDatabase(database_name)
-    //        .GetCollection<TClass>(collection_name)
-    //        .RemoveAll();
-    //    return result;
-    //}
-
-    //public SafeModeResult Add(String database_name
-    //    , String collection_name
-    //    , TClass document)
-    //{
-    //    SafeModeResult result = instance.DBServer.GetDatabase(database_name)
-    //        .GetCollection<TClass>(collection_name)
-    //        .Insert(document);
-    //    return result;
-    //}
-
-    //public IEnumerable<SafeModeResult> AddBatch(String database_name
-    //    , String collection_name
-    //    , IEnumerable<TClass> documents)
-    //{
-    //    IEnumerable<SafeModeResult> results = instance.DBServer.GetDatabase(database_name)
-    //        .GetCollection<TClass>(collection_name)
-    //        .InsertBatch(documents);
-    //    return results;
-    //}
-
-    //public SafeModeResult Update(string database_name
-    //    , string collection_name
-    //    , BsonValue key, TClass document)
-    //{
-    //    return Update(database_name
-    //        , collection_name
-    //        , Query.And(Query.EQ("_id", BsonValue.Create(key)))
-    //        , document);
-    //}
-
-    //public SafeModeResult Update(string database_name
-    //    , string collection_name
-    //    , IMongoQuery query, TClass document)
-    //{
-    //    return instance.DBServer.GetDatabase(database_name)
-    //        .GetCollection<TClass>(collection_name)
-    //        .Update(query, new UpdateDocument(document.ToBsonDocument<TClass>()));
-    //}
-
-    #region IDisposable Members  
-    public void Dispose()
-    {
-        try
+        /// <summary>
+        /// 插入多个数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collectionName"></param>
+        /// <param name="entiry"></param>
+        public static void InsertAll<T>(string collectionName, IEnumerable<T> entity) where T : class
         {
-            instance.DBServer.Disconnect();
+            using (Mongo mongo = new Mongo(connectionString))
+            {
+                mongo.Connect();
+                IMongoDatabase friends = mongo.GetDatabase(database);
+                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
+                categories.Insert(entity, true);
+                mongo.Disconnect();
+
+            }
         }
-        catch { }
+        #endregion
 
-        IsDisposed = true;
-    }
-    #endregion
+        #region 更新
+        /// <summary>
+        /// 更新操作
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="collectionName">表名</param>
+        /// <param name="query">条件</param>
+        /// <param name="entry">新实体</param>
+        public static void Update<T>(string collectionName, Document entity, Document query) where T : class
+        {
+            using (Mongo mongo = new Mongo(connectionString))
+            {
+                mongo.Connect();
+                IMongoDatabase friends = mongo.GetDatabase(database);
+                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
+                categories.Update(entity, query, true);
+                mongo.Disconnect();
+            }
+        }
+        /// <summary>
+        /// 更新操作
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="collectionName">表名</param>
+        /// <param name="query">条件</param>
+        /// <param name="entry">新实体</param>
+        public static void UpdateAll<T>(string collectionName, Document entity, Document query) where T : class
+        {
+            using (Mongo mongo = new Mongo(connectionString))
+            {
+                mongo.Connect();
+                IMongoDatabase friends = mongo.GetDatabase(database);
+                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
+                categories.Update(entity, query, UpdateFlags.MultiUpdate, true);
+                mongo.Disconnect();
+            }
+        }
+        #endregion
 
-    public IEnumerable<string> GetDatabaseNames()
-    {
-        return instance.DBServer.GetDatabaseNames();
-    }
+        #region 查询
+        /// <summary>
+        /// 获取一条数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collectionName"></param>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static T GetOne<T>(string collectionName, Document query) where T : class
+        {
+            T result = default(T);
+            using (Mongo mongo = new Mongo(connectionString))
+            {
+                mongo.Connect();
+                IMongoDatabase friends = mongo.GetDatabase(database);
+                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
+                result = categories.FindOne(query);
+                mongo.Disconnect();
 
-    public MongoDatabase GetDatabase(string dbname)
-    {
-        return instance.DBServer.GetDatabase(dbname);
-    }
+            }
+            return result;
+        }
+        /// <summary>
+        /// 获取一条数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collectionName"></param>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static T GetOne<T>(string collectionName, Document query, Document fields) where T : class
+        {
+            T result = default(T);
+            using (Mongo mongo = new Mongo(connectionString))
+            {
+                mongo.Connect();
+                IMongoDatabase friends = mongo.GetDatabase(database);
+                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
+                result = categories.Find(query, fields).Skip(0).Limit(1).Documents.First();
+                mongo.Disconnect();
 
-    public IEnumerable<BsonValue> Distinct(string dbname, String collectionname, string key)
-    {
-        return Distinct(dbname, collectionname, key, Query.Null);
-    }
+            }
+            return result;
+        }
 
-    public IEnumerable<BsonValue> Distinct(string dbname, String collectionname, string key, IMongoQuery query)
-    {
-        return instance.DBServer.GetDatabase(dbname).GetCollection(collectionname).Distinct(key, query);
+        /// <summary>
+        /// 获取一个通过查询条件的集合下所有数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collectionName"></param>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static List<T> GetList<T>(string collectionName, object query) where T : class
+        {
+            List<T> result = new List<T>();
+            using (Mongo mongo = new Mongo(connectionString))
+            {
+                mongo.Connect();
+                IMongoDatabase friends = mongo.GetDatabase(database);
+                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
+                foreach (T entity in categories.Find(query).Skip(0).Limit(100).Documents)
+                {
+                    result.Add(entity);
+                }
+                mongo.Disconnect();
+
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 获取一个集合下所有数据
+        /// </summary>
+        /// <param name="collectionName"></param>
+        /// <returns></returns>
+        public static List<T> GetAll<T>(string collectionName) where T : class
+        {
+            List<T> result = new List<T>();
+            using (Mongo mongo = new Mongo(connectionString))
+            {
+                mongo.Connect();
+                IMongoDatabase friends = mongo.GetDatabase(database);
+                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
+                foreach (T entity in categories.FindAll().Limit(50).Documents)
+                {
+                    result.Add(entity);
+                }
+                mongo.Disconnect();
+
+            }
+            return result;
+        }
+        /// <summary>
+        /// 获取列表
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collectionName"></param>
+        /// <param name="query"></param>
+        /// <param name="Sort"></param>
+        /// <param name="cp"></param>
+        /// <param name="mp"></param>
+        /// <returns></returns>
+        public static List<T> GetList<T>(string collectionName, object selector, Document sort, int cp, int mp) where T : class
+        {
+            List<T> result = new List<T>();
+            using (Mongo mongo = new Mongo(connectionString))
+            {
+                mongo.Connect();
+                IMongoDatabase friends = mongo.GetDatabase(database);
+                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
+                foreach (T entity in categories.Find(selector).Sort(sort).Skip((cp - 1) * mp).Limit(mp).Documents)
+                {
+                    result.Add(entity);
+                }
+                mongo.Disconnect();
+
+            }
+            return result;
+        }
+        /// <summary>
+        /// 获取列表
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collectionName"></param>
+        /// <param name="query"></param>
+        /// <param name="Sort"></param>
+        /// <param name="cp"></param>
+        /// <param name="mp"></param>
+        /// <returns></returns>
+        public static List<T> GetList<T>(string collectionName, object selector, object fields, Document sort, int cp, int mp) where T : class
+        {
+            List<T> result = new List<T>();
+            using (Mongo mongo = new Mongo(connectionString))
+            {
+                mongo.Connect();
+                IMongoDatabase friends = mongo.GetDatabase(database);
+                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
+                foreach (T entity in categories.Find(selector, fields).Sort(sort).Skip((cp - 1) * mp).Limit(mp).Documents)
+                {
+                    result.Add(entity);
+                }
+                mongo.Disconnect();
+
+            }
+            return result;
+        }
+        #endregion
+
+
+        #region 删除
+        /// <summary>
+        /// 删除数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collectionName"></param>
+        /// <param name="entity"></param>
+        public static void Delete<T>(string collectionName, Document query) where T : class
+        {
+            using (Mongo mongo = new Mongo(connectionString))
+            {
+                mongo.Connect();
+                IMongoDatabase friends = mongo.GetDatabase(database);
+                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
+                categories.Remove(query, true);
+                mongo.Disconnect();
+            }
+        }
+        #endregion
     }
-}  
-}  
+}
