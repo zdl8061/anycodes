@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections;
 using MongoDB.Bson;
 using MongoDB.Driver.Builders;
+using MongoDB.Driver;
 
 namespace UnitTestProject1
 {
@@ -18,8 +19,6 @@ namespace UnitTestProject1
         {
             string _data = "{\"MsgBody\":[{\"MsgType\":\"TIMTextElem\",\"MsgContent\":{\"Text\":\"fasdfdsfdsf\"}},{\"MsgType\":\"TIMFaceElem\",\"MsgContent\":{\"Index\":3,\"Data\":\"[发呆]\"}},{\"MsgType\":\"TIMTextElem\",\"MsgContent\":{\"Text\":\"nexid = 2 & brandid = 2 & dialogid = \"}}],\"CallbackCommand\":\"C2C.CallbackAfterSendMsg\",\"From_Account\":\"VISITOR_11\",\"To_Account\":\"TXUSER_235500\",\"MsgTime\":1495788601}";
             BsonDocument _bson = BsonDocument.Parse(_data);
-
-
 
             //Query.All("name", "a", "b");//通过多个元素来匹配数组
             //Query.And(Query.EQ("name", "a"), Query.EQ("title", "t"));//同时满足多个条件
@@ -42,10 +41,13 @@ namespace UnitTestProject1
             //Query.Matches("Title", str);//模糊查询 相当于sql中like  -- str可包含正则表达式
 
             MongoDBHelper.InsertOne<BsonDocument>("chatlog", _bson);
-
+           
             var _chat = MongoDBHelper.GetOne<BsonDocument>("chatlog", Query.EQ("From_Account", "VISITOR_11"));
 
-            var _t = MongoDBHelper.GetAll<BsonDocument>("chatlog", Query.EQ("From_Account", "VISITOR_11"), new PagerInfo { Page = 2, PageSize = 20 });
+            var _t = MongoDBHelper.GetAll<BsonDocument>("chatlog",
+                Query.And(Query.EQ("From_Account", "VISITOR_11"), Query.EQ("To_Account", "TXUSER_235500")
+               , Query.EQ("MsgBody.MsgType", "TIMTextElem")
+                ), new PagerInfo { Page = 1, PageSize = 20 });
 
             var _r =MongoDBHelper.Delete("chatlog", "5928f0459d491c26e81b0191");
 
