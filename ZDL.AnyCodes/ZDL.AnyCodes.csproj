@@ -139,7 +139,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Lib\MongoDB.Bson.dll" />
     <Content Include="Lib\MongoDB.dll" />
+    <Content Include="Lib\MongoDB.Driver.dll" />
     <Content Include="Lib\ThoughtWorks.QRCode.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

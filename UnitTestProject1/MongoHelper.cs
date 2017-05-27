@@ -1,10 +1,10 @@
 ﻿/*----------------------------------------------------------------
  *  Copyright (C) 2015 天下商机（txooo.com）版权所有
  * 
- *  文 件 名：Class1
+ *  文 件 名：MongoHelper
  *  所属项目：
  *  创建用户：张德良
- *  创建时间：2017/5/26 星期五 下午 13:08:56
+ *  创建时间：2017/5/27 星期六 上午 9:25:27
  *  
  *  功能描述：
  *          1、
@@ -19,260 +19,452 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using MongoDB;
+using MongoDB.Driver;
+using MongoDB.Bson;
+using MongoDB.Driver.Builders;
 
 namespace UnitTestProject1
 {
-    public class MongoHelper
+    /// <summary>
+    /// mongodb封装
+    /// </summary>
+    public sealed class MongoDBHelper
     {
-        public static readonly string connectionString = "Servers=127.0.0.1:27017;ConnectTimeout=30000;ConnectionLifetime=300000;MinimumPoolSize=8;MaximumPoolSize=256;Pooled=true";
-        public static readonly string database = "TxIM";
-
+        public static readonly string connectionString_Default = "mongodb://127.0.0.1:27017";
+        public static readonly string database_Default = "TxIM";
         #region 新增
-        /// <summary>
-        /// 插入新数据
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="collectionName"></param>
-        /// <param name="entiry"></param>
-        public static void InsertOne<T>(string collectionName, T entity) where T : class
+        public static WriteConcernResult InsertOne<T>(string collectionName, T entity)
         {
-            using (Mongo mongo = new Mongo(connectionString))
-            {
-                mongo.Connect();
-                IMongoDatabase friends = mongo.GetDatabase(database);
-                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
-                categories.Insert(entity, true);
-                mongo.Disconnect();
-
-            }
+            return MongoDBHelper.InsertOne<T>(MongoDBHelper.connectionString_Default, MongoDBHelper.database_Default, collectionName, entity);
         }
-        /// <summary>
-        /// 插入多个数据
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="collectionName"></param>
-        /// <param name="entiry"></param>
-        public static void InsertAll<T>(string collectionName, IEnumerable<T> entity) where T : class
+        public static WriteConcernResult InsertOne<T>(string connectionString, string databaseName, string collectionName, T entity)
         {
-            using (Mongo mongo = new Mongo(connectionString))
+            WriteConcernResult result = new WriteConcernResult();
+            if (null == entity)
             {
-                mongo.Connect();
-                IMongoDatabase friends = mongo.GetDatabase(database);
-                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
-                categories.Insert(entity, true);
-                mongo.Disconnect();
-
+                return null;
             }
-        }
-        #endregion
-
-        #region 更新
-        /// <summary>
-        /// 更新操作
-        /// </summary>
-        /// <typeparam name="T">类型</typeparam>
-        /// <param name="collectionName">表名</param>
-        /// <param name="query">条件</param>
-        /// <param name="entry">新实体</param>
-        public static void Update<T>(string collectionName, Document entity, Document query) where T : class
-        {
-            using (Mongo mongo = new Mongo(connectionString))
+            MongoServer server = new MongoClient(connectionString).GetServer();
+            //获取数据库或者创建数据库（不存在的话）。
+            MongoDatabase database = server.GetDatabase(databaseName);
+            using (server.RequestStart(database))//开始连接数据库。
             {
-                mongo.Connect();
-                IMongoDatabase friends = mongo.GetDatabase(database);
-                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
-                categories.Update(entity, query, true);
-                mongo.Disconnect();
-            }
-        }
-        /// <summary>
-        /// 更新操作
-        /// </summary>
-        /// <typeparam name="T">类型</typeparam>
-        /// <param name="collectionName">表名</param>
-        /// <param name="query">条件</param>
-        /// <param name="entry">新实体</param>
-        public static void UpdateAll<T>(string collectionName, Document entity, Document query) where T : class
-        {
-            using (Mongo mongo = new Mongo(connectionString))
-            {
-                mongo.Connect();
-                IMongoDatabase friends = mongo.GetDatabase(database);
-                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
-                categories.Update(entity, query, UpdateFlags.MultiUpdate, true);
-                mongo.Disconnect();
-            }
-        }
-        #endregion
-
-        #region 查询
-        /// <summary>
-        /// 获取一条数据
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="collectionName"></param>
-        /// <param name="query"></param>
-        /// <returns></returns>
-        public static T GetOne<T>(string collectionName, Document query) where T : class
-        {
-            T result = default(T);
-            using (Mongo mongo = new Mongo(connectionString))
-            {
-                mongo.Connect();
-                IMongoDatabase friends = mongo.GetDatabase(database);
-                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
-                result = categories.FindOne(query);
-                mongo.Disconnect();
-
+                MongoCollection<BsonDocument> myCollection = database.GetCollection<BsonDocument>(collectionName);
+                result = myCollection.Insert(entity);
             }
             return result;
         }
-        /// <summary>
-        /// 获取一条数据
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="collectionName"></param>
-        /// <param name="query"></param>
-        /// <returns></returns>
-        public static T GetOne<T>(string collectionName, Document query, Document fields) where T : class
+        public static IEnumerable<WriteConcernResult> InsertAll<T>(string collectionName, IEnumerable<T> entitys)
         {
-            T result = default(T);
-            using (Mongo mongo = new Mongo(connectionString))
-            {
-                mongo.Connect();
-                IMongoDatabase friends = mongo.GetDatabase(database);
-                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
-                result = categories.Find(query, fields).Skip(0).Limit(1).Documents.First();
-                mongo.Disconnect();
-
-            }
-            return result;
+            return MongoDBHelper.InsertAll<T>(MongoDBHelper.connectionString_Default, MongoDBHelper.database_Default, collectionName, entitys);
         }
-
-        /// <summary>
-        /// 获取一个通过查询条件的集合下所有数据
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="collectionName"></param>
-        /// <param name="query"></param>
-        /// <returns></returns>
-        public static List<T> GetList<T>(string collectionName, object query) where T : class
+        public static IEnumerable<WriteConcernResult> InsertAll<T>(string connectionString, string databaseName, string collectionName, IEnumerable<T> entitys)
         {
-            List<T> result = new List<T>();
-            using (Mongo mongo = new Mongo(connectionString))
+            IEnumerable<WriteConcernResult> result = null;
+            if (null == entitys)
             {
-                mongo.Connect();
-                IMongoDatabase friends = mongo.GetDatabase(database);
-                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
-                foreach (T entity in categories.Find(query).Skip(0).Limit(100).Documents)
-                {
-                    result.Add(entity);
-                }
-                mongo.Disconnect();
-
+                return null;
             }
-            return result;
-        }
-
-        /// <summary>
-        /// 获取一个集合下所有数据
-        /// </summary>
-        /// <param name="collectionName"></param>
-        /// <returns></returns>
-        public static List<T> GetAll<T>(string collectionName) where T : class
-        {
-            List<T> result = new List<T>();
-            using (Mongo mongo = new Mongo(connectionString))
+            MongoServer server = new MongoClient(connectionString).GetServer();
+            //获取数据库或者创建数据库（不存在的话）。
+            MongoDatabase database = server.GetDatabase(databaseName);
+            using (server.RequestStart(database))//开始连接数据库。
             {
-                mongo.Connect();
-                IMongoDatabase friends = mongo.GetDatabase(database);
-                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
-                foreach (T entity in categories.FindAll().Limit(50).Documents)
-                {
-                    result.Add(entity);
-                }
-                mongo.Disconnect();
-
-            }
-            return result;
-        }
-        /// <summary>
-        /// 获取列表
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="collectionName"></param>
-        /// <param name="query"></param>
-        /// <param name="Sort"></param>
-        /// <param name="cp"></param>
-        /// <param name="mp"></param>
-        /// <returns></returns>
-        public static List<T> GetList<T>(string collectionName, object selector, Document sort, int cp, int mp) where T : class
-        {
-            List<T> result = new List<T>();
-            using (Mongo mongo = new Mongo(connectionString))
-            {
-                mongo.Connect();
-                IMongoDatabase friends = mongo.GetDatabase(database);
-                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
-                foreach (T entity in categories.Find(selector).Sort(sort).Skip((cp - 1) * mp).Limit(mp).Documents)
-                {
-                    result.Add(entity);
-                }
-                mongo.Disconnect();
-
-            }
-            return result;
-        }
-        /// <summary>
-        /// 获取列表
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="collectionName"></param>
-        /// <param name="query"></param>
-        /// <param name="Sort"></param>
-        /// <param name="cp"></param>
-        /// <param name="mp"></param>
-        /// <returns></returns>
-        public static List<T> GetList<T>(string collectionName, object selector, object fields, Document sort, int cp, int mp) where T : class
-        {
-            List<T> result = new List<T>();
-            using (Mongo mongo = new Mongo(connectionString))
-            {
-                mongo.Connect();
-                IMongoDatabase friends = mongo.GetDatabase(database);
-                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
-                foreach (T entity in categories.Find(selector, fields).Sort(sort).Skip((cp - 1) * mp).Limit(mp).Documents)
-                {
-                    result.Add(entity);
-                }
-                mongo.Disconnect();
-
+                MongoCollection<BsonDocument> myCollection = database.GetCollection<BsonDocument>(collectionName);
+                result = myCollection.InsertBatch(entitys);
             }
             return result;
         }
         #endregion
-
-
+        #region 修改
+        public static WriteConcernResult UpdateOne<T>(string collectionName, T entity)
+        {
+            return MongoDBHelper.UpdateOne<T>(MongoDBHelper.connectionString_Default, MongoDBHelper.database_Default, collectionName, entity);
+        }
+        public static WriteConcernResult UpdateOne<T>(string connectionString, string databaseName, string collectionName, T entity)
+        {
+            MongoServer server = new MongoClient(connectionString).GetServer();
+            //获取数据库或者创建数据库（不存在的话）。
+            MongoDatabase database = server.GetDatabase(databaseName);
+            WriteConcernResult result;
+            using (server.RequestStart(database))//开始连接数据库。
+            {
+                MongoCollection<BsonDocument> myCollection = database.GetCollection<BsonDocument>(collectionName);
+                result = myCollection.Save(entity);
+            }
+            return result;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collectionName"></param>
+        /// <param name="query">条件查询。 调用示例：Query.Matches("Title", "感冒") 或者 Query.EQ("Title", "感冒") 或者Query.And(Query.Matches("Title", "感冒"),Query.EQ("Author", "yanc")) 等等</param>
+        /// <param name="update">更新设置。调用示例：Update.Set("Title", "yanc") 或者 Update.Set("Title", "yanc").Set("Author", "yanc2") 等等</param>
+        /// <returns></returns>
+        public static WriteConcernResult UpdateAll<T>(string collectionName, IMongoQuery query, IMongoUpdate update)
+        {
+            return MongoDBHelper.UpdateAll<T>(MongoDBHelper.connectionString_Default, MongoDBHelper.database_Default, collectionName, query, update);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="connectionString"></param>
+        /// <param name="databaseName"></param>
+        /// <param name="collectionName"></param>
+        /// <param name="query">条件查询。 调用示例：Query.Matches("Title", "感冒") 或者 Query.EQ("Title", "感冒") 或者Query.And(Query.Matches("Title", "感冒"),Query.EQ("Author", "yanc")) 等等</param>
+        /// <param name="update">更新设置。调用示例：Update.Set("Title", "yanc") 或者 Update.Set("Title", "yanc").Set("Author", "yanc2") 等等</param>
+        /// <returns></returns>
+        public static WriteConcernResult UpdateAll<T>(string connectionString, string databaseName, string collectionName, IMongoQuery query, IMongoUpdate update)
+        {
+            WriteConcernResult result;
+            if (null == query || null == update)
+            {
+                return null;
+            }
+            MongoServer server = new MongoClient(connectionString).GetServer();
+            //获取数据库或者创建数据库（不存在的话）。
+            MongoDatabase database = server.GetDatabase(databaseName);
+            using (server.RequestStart(database))//开始连接数据库。
+            {
+                MongoCollection<BsonDocument> myCollection = database.GetCollection<BsonDocument>(collectionName);
+                result = myCollection.Update(query, update, UpdateFlags.Multi);
+            }
+            return result;
+        }
+        #endregion
         #region 删除
+        public static WriteConcernResult Delete(string collectionName, string _id)
+        {
+            return MongoDBHelper.Delete(MongoDBHelper.connectionString_Default, MongoDBHelper.database_Default, collectionName, _id);
+        }
+        public static WriteConcernResult Delete(string connectionString, string databaseName, string collectionName, string _id)
+        {
+            WriteConcernResult result;
+            ObjectId id;
+            if (!ObjectId.TryParse(_id, out id))
+            {
+                return null;
+            }
+            MongoServer server = new MongoClient(connectionString).GetServer();
+            //获取数据库或者创建数据库（不存在的话）。
+            MongoDatabase database = server.GetDatabase(databaseName);
+            using (server.RequestStart(database))//开始连接数据库。
+            {
+                MongoCollection<BsonDocument> myCollection = database.GetCollection<BsonDocument>(collectionName);
+                result = myCollection.Remove(Query.EQ("_id", id));
+            }
+            return result;
+        }
+        public static WriteConcernResult DeleteAll(string collectionName)
+        {
+            return MongoDBHelper.DeleteAll(MongoDBHelper.connectionString_Default, MongoDBHelper.database_Default, collectionName, null);
+        }
         /// <summary>
-        /// 删除数据
+        /// 
+        /// </summary>
+        /// <param name="collectionName"></param>
+        /// <param name="query">条件查询。 调用示例：Query.Matches("Title", "感冒") 或者 Query.EQ("Title", "感冒") 或者Query.And(Query.Matches("Title", "感冒"),Query.EQ("Author", "yanc")) 等等</param>
+        /// <returns></returns>
+        public static WriteConcernResult DeleteAll(string collectionName, IMongoQuery query)
+        {
+            return MongoDBHelper.DeleteAll(MongoDBHelper.connectionString_Default, MongoDBHelper.database_Default, collectionName, query);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="connectionString"></param>
+        /// <param name="databaseName"></param>
+        /// <param name="collectionName"></param>
+        /// <param name="query">条件查询。 调用示例：Query.Matches("Title", "感冒") 或者 Query.EQ("Title", "感冒") 或者Query.And(Query.Matches("Title", "感冒"),Query.EQ("Author", "yanc")) 等等</param>
+        /// <returns></returns>
+        public static WriteConcernResult DeleteAll(string connectionString, string databaseName, string collectionName, IMongoQuery query)
+        {
+            MongoServer server = new MongoClient(connectionString).GetServer();
+            //获取数据库或者创建数据库（不存在的话）。
+            MongoDatabase database = server.GetDatabase(databaseName);
+            WriteConcernResult result;
+            using (server.RequestStart(database))//开始连接数据库。
+            {
+                MongoCollection<BsonDocument> myCollection = database.GetCollection<BsonDocument>(collectionName);
+                if (null == query)
+                {
+                    result = myCollection.RemoveAll();
+                }
+                else
+                {
+                    result = myCollection.Remove(query);
+                }
+            }
+            return result;
+        }
+        #endregion
+        #region 获取单条信息
+        public static T GetOne<T>(string collectionName, string _id)
+        {
+            return MongoDBHelper.GetOne<T>(MongoDBHelper.connectionString_Default, MongoDBHelper.database_Default, collectionName, _id);
+        }
+        public static T GetOne<T>(string connectionString, string databaseName, string collectionName, string _id)
+        {
+            T result = default(T);
+            ObjectId id;
+            if (!ObjectId.TryParse(_id, out id))
+            {
+                return default(T);
+            }
+            MongoServer server = new MongoClient(connectionString).GetServer();
+            //获取数据库或者创建数据库（不存在的话）。
+            MongoDatabase database = server.GetDatabase(databaseName);
+            using (server.RequestStart(database))//开始连接数据库。
+            {
+                MongoCollection<BsonDocument> myCollection = database.GetCollection<BsonDocument>(collectionName);
+                result = myCollection.FindOneAs<T>(Query.EQ("_id", id));
+            }
+            return result;
+        }
+        /// <summary>
+        /// 
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="collectionName"></param>
-        /// <param name="entity"></param>
-        public static void Delete<T>(string collectionName, Document query) where T : class
+        /// <param name="query">条件查询。 调用示例：Query.Matches("Title", "感冒") 或者 Query.EQ("Title", "感冒") 或者Query.And(Query.Matches("Title", "感冒"),Query.EQ("Author", "yanc")) 等等</param>
+        /// <returns></returns>
+        public static T GetOne<T>(string collectionName, IMongoQuery query)
         {
-            using (Mongo mongo = new Mongo(connectionString))
+            return GetOne<T>(MongoDBHelper.connectionString_Default, MongoDBHelper.database_Default, collectionName, query);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="connectionString"></param>
+        /// <param name="databaseName"></param>
+        /// <param name="collectionName"></param>
+        /// <param name="query">条件查询。 调用示例：Query.Matches("Title", "感冒") 或者 Query.EQ("Title", "感冒") 或者Query.And(Query.Matches("Title", "感冒"),Query.EQ("Author", "yanc")) 等等</param>
+        /// <returns></returns>
+        public static T GetOne<T>(string connectionString, string databaseName, string collectionName, IMongoQuery query)
+        {
+            MongoServer server = new MongoClient(connectionString).GetServer();
+            //获取数据库或者创建数据库（不存在的话）。
+            MongoDatabase database = server.GetDatabase(databaseName);
+            T result = default(T);
+            using (server.RequestStart(database))//开始连接数据库。
             {
-                mongo.Connect();
-                IMongoDatabase friends = mongo.GetDatabase(database);
-                IMongoCollection<T> categories = friends.GetCollection<T>(collectionName);
-                categories.Remove(query, true);
-                mongo.Disconnect();
+                MongoCollection<BsonDocument> myCollection = database.GetCollection<BsonDocument>(collectionName);
+                if (null == query)
+                {
+                    result = myCollection.FindOneAs<T>();
+                }
+                else
+                {
+                    result = myCollection.FindOneAs<T>(query);
+                }
+            }
+            return result;
+        }
+        #endregion
+        #region 获取多个
+        public static List<T> GetAll<T>(string collectionName)
+        {
+            return MongoDBHelper.GetAll<T>(MongoDBHelper.connectionString_Default, MongoDBHelper.database_Default, collectionName);
+        }
+        /// <summary>
+        /// 如果不清楚具体的数量，一般不要用这个函数。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collectionName"></param>
+        /// <returns></returns>
+        public static List<T> GetAll<T>(string connectionString, string databaseName, string collectionName)
+        {
+            MongoServer server = new MongoClient(connectionString).GetServer();
+            //获取数据库或者创建数据库（不存在的话）。
+            MongoDatabase database = server.GetDatabase(databaseName);
+            List<T> result = new List<T>();
+            using (server.RequestStart(database))//开始连接数据库。
+            {
+                MongoCollection<BsonDocument> myCollection = database.GetCollection<BsonDocument>(collectionName);
+                foreach (T entity in myCollection.FindAllAs<T>())
+                {
+                    result.Add(entity);
+                }
+            }
+            return result;
+        }
+        public static List<T> GetAll<T>(string collectionName, int count)
+        {
+            return MongoDBHelper.GetAll<T>(collectionName, count, null, null);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collectionName"></param>
+        /// <param name="count"></param>
+        /// <param name="query">条件查询。 调用示例：Query.Matches("Title", "感冒") 或者 Query.EQ("Title", "感冒") 或者Query.And(Query.Matches("Title", "感冒"),Query.EQ("Author", "yanc")) 等等</param>
+        /// <returns></returns>
+        public static List<T> GetAll<T>(string collectionName, int count, IMongoQuery query)
+        {
+            return MongoDBHelper.GetAll<T>(collectionName, count, query, null);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collectionName"></param>
+        /// <param name="count"></param>
+        /// <param name="sortBy">排序用的。调用示例：SortBy.Descending("Title") 或者 SortBy.Descending("Title").Ascending("Author")等等</param>
+        /// <returns></returns>
+        public static List<T> GetAll<T>(string collectionName, int count, IMongoSortBy sortBy)
+        {
+            return MongoDBHelper.GetAll<T>(collectionName, count, null, sortBy);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collectionName"></param>
+        /// <param name="count"></param>
+        /// <param name="query">条件查询。 调用示例：Query.Matches("Title", "感冒") 或者 Query.EQ("Title", "感冒") 或者Query.And(Query.Matches("Title", "感冒"),Query.EQ("Author", "yanc")) 等等</param>
+        /// <param name="sortBy">排序用的。调用示例：SortBy.Descending("Title") 或者 SortBy.Descending("Title").Ascending("Author")等等</param>
+        /// <param name="fields">只返回所需要的字段的数据。调用示例："Title" 或者 new string[] { "Title", "Author" }等等</param>
+        /// <returns></returns>
+        public static List<T> GetAll<T>(string collectionName, int count, IMongoQuery query, IMongoSortBy sortBy, params string[] fields)
+        {
+            PagerInfo pagerInfo = new PagerInfo();
+            pagerInfo.Page = 1;
+            pagerInfo.PageSize = count;
+            return MongoDBHelper.GetAll<T>(MongoDBHelper.connectionString_Default, MongoDBHelper.database_Default, collectionName, query, pagerInfo, sortBy, fields);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collectionName"></param>
+        /// <param name="query">条件查询。 调用示例：Query.Matches("Title", "感冒") 或者 Query.EQ("Title", "感冒") 或者Query.And(Query.Matches("Title", "感冒"),Query.EQ("Author", "yanc")) 等等</param>
+        /// <param name="pagerInfo"></param>
+        /// <returns></returns>
+        public static List<T> GetAll<T>(string collectionName, IMongoQuery query, PagerInfo pagerInfo)
+        {
+            return MongoDBHelper.GetAll<T>(MongoDBHelper.connectionString_Default, MongoDBHelper.database_Default, collectionName, query, pagerInfo, null);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collectionName"></param>
+        /// <param name="query">条件查询。 调用示例：Query.Matches("Title", "感冒") 或者 Query.EQ("Title", "感冒") 或者Query.And(Query.Matches("Title", "感冒"),Query.EQ("Author", "yanc")) 等等</param>
+        /// <param name="pagerInfo"></param>
+        /// <param name="sortBy">排序用的。调用示例：SortBy.Descending("Title") 或者 SortBy.Descending("Title").Ascending("Author")等等</param>
+        /// <returns></returns>
+        public static List<T> GetAll<T>(string collectionName, IMongoQuery query, PagerInfo pagerInfo, IMongoSortBy sortBy)
+        {
+            return MongoDBHelper.GetAll<T>(MongoDBHelper.connectionString_Default, MongoDBHelper.database_Default, collectionName, query, pagerInfo, sortBy);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collectionName"></param>
+        /// <param name="query">条件查询。 调用示例：Query.Matches("Title", "感冒") 或者 Query.EQ("Title", "感冒") 或者Query.And(Query.Matches("Title", "感冒"),Query.EQ("Author", "yanc")) 等等</param>
+        /// <param name="pagerInfo"></param>
+        /// <param name="fields">只返回所需要的字段的数据。调用示例："Title" 或者 new string[] { "Title", "Author" }等等</param>
+        /// <returns></returns>
+        public static List<T> GetAll<T>(string collectionName, IMongoQuery query, PagerInfo pagerInfo, params string[] fields)
+        {
+            return MongoDBHelper.GetAll<T>(MongoDBHelper.connectionString_Default, MongoDBHelper.database_Default, collectionName, query, pagerInfo, null, fields);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="collectionName"></param>
+        /// <param name="query">条件查询。 调用示例：Query.Matches("Title", "感冒") 或者 Query.EQ("Title", "感冒") 或者Query.And(Query.Matches("Title", "感冒"),Query.EQ("Author", "yanc")) 等等</param>
+        /// <param name="pagerInfo"></param>
+        /// <param name="sortBy">排序用的。调用示例：SortBy.Descending("Title") 或者 SortBy.Descending("Title").Ascending("Author")等等</param>
+        /// <param name="fields">只返回所需要的字段的数据。调用示例："Title" 或者 new string[] { "Title", "Author" }等等</param>
+        /// <returns></returns>
+        public static List<T> GetAll<T>(string collectionName, IMongoQuery query, PagerInfo pagerInfo, IMongoSortBy sortBy, params string[] fields)
+        {
+            return MongoDBHelper.GetAll<T>(MongoDBHelper.connectionString_Default, MongoDBHelper.database_Default, collectionName, query, pagerInfo, sortBy, fields);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="connectionString"></param>
+        /// <param name="databaseName"></param>
+        /// <param name="collectionName"></param>
+        /// <param name="query">条件查询。 调用示例：Query.Matches("Title", "感冒") 或者 Query.EQ("Title", "感冒") 或者Query.And(Query.Matches("Title", "感冒"),Query.EQ("Author", "yanc")) 等等</param>
+        /// <param name="pagerInfo"></param>
+        /// <param name="sortBy">排序用的。调用示例：SortBy.Descending("Title") 或者 SortBy.Descending("Title").Ascending("Author")等等</param>
+        /// <param name="fields">只返回所需要的字段的数据。调用示例："Title" 或者 new string[] { "Title", "Author" }等等</param>
+        /// <returns></returns>
+        public static List<T> GetAll<T>(string connectionString, string databaseName, string collectionName, IMongoQuery query, PagerInfo pagerInfo, IMongoSortBy sortBy, params string[] fields)
+        {
+            MongoServer server = new MongoClient(connectionString).GetServer();
+            //获取数据库或者创建数据库（不存在的话）。
+            MongoDatabase database = server.GetDatabase(databaseName);
+            List<T> result = new List<T>();
+            using (server.RequestStart(database))//开始连接数据库。
+            {
+                MongoCollection<BsonDocument> myCollection = database.GetCollection<BsonDocument>(collectionName);
+                MongoCursor<T> myCursor;
+                if (null == query)
+                {
+                    myCursor = myCollection.FindAllAs<T>();
+                }
+                else
+                {
+                    myCursor = myCollection.FindAs<T>(query);
+                }
+                if (null != sortBy)
+                {
+                    myCursor.SetSortOrder(sortBy);
+                }
+                if (null != fields)
+                {
+                    myCursor.SetFields(fields);
+                }
+                foreach (T entity in myCursor.SetSkip((pagerInfo.Page - 1) * pagerInfo.PageSize).SetLimit(pagerInfo.PageSize))//.SetSkip(100).SetLimit(10)是指读取第一百条后的10条数据。
+                {
+                    result.Add(entity);
+                }
+            }
+            return result;
+        }
+        #endregion
+        #region 索引
+        public static void CreateIndex(string collectionName, params string[] keyNames)
+        {
+            MongoDBHelper.CreateIndex(MongoDBHelper.connectionString_Default, MongoDBHelper.database_Default, collectionName, keyNames);
+        }
+        public static void CreateIndex(string connectionString, string databaseName, string collectionName, params string[] keyNames)
+        {
+            WriteConcernResult result = new WriteConcernResult();
+            if (null == keyNames)
+            {
+                return;
+            }
+            MongoServer server = new MongoClient(connectionString).GetServer();
+            //获取数据库或者创建数据库（不存在的话）。
+            MongoDatabase database = server.GetDatabase(databaseName);
+            using (server.RequestStart(database))//开始连接数据库。
+            {
+                MongoCollection<BsonDocument> myCollection = database.GetCollection<BsonDocument>(collectionName);
+                if (!myCollection.IndexExists(keyNames))
+                {
+                    myCollection.EnsureIndex(keyNames);
+                }
             }
         }
         #endregion
+    }
+
+    public class PagerInfo
+    {
+        public int Page { get; set; }
+
+        public int PageSize { get; set; }
     }
 }
