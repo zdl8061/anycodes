@@ -10,7 +10,7 @@ using System.Reflection;
 /************************************
  * 作者：清风 http://www.cnblogs.com/yyl8781697/
  * *********************************/
-namespace MongoDBTest
+namespace MongoDBDemo
 {
     /// <summary>
     /// Mongo db的数据库帮助类 还未投入到生产环境中 
@@ -27,14 +27,26 @@ namespace MongoDBTest
         /// </summary>
         private readonly string OBJECTID_KEY = "_id";
 
-        public MongoDBHelper()
+        public MongoDBHelper(string host, string dbName, int port = 27017, int timeout = 30)
         {
-            this._db = new MongoDB().GetDataBase();
+            this._db = GetDataBase(host, dbName, port, timeout);
         }
 
-        public MongoDBHelper(MongoDatabase db)
+        /// <summary>
+        /// 得到数据库实例
+        /// </summary>
+        /// <returns></returns>
+        private MongoDatabase GetDataBase(string host, string dbName, int port = 27017, int timeout = 30)
         {
-            this._db = db;
+            MongoClientSettings mongoSetting = new MongoClientSettings();
+            //设置连接超时时间
+            mongoSetting.ConnectTimeout = new TimeSpan(timeout * TimeSpan.TicksPerSecond);
+            //设置数据库服务器
+            mongoSetting.Server = new MongoServerAddress(host, port);
+            //创建Mongo的客户端
+            MongoClient client = new MongoClient(mongoSetting);
+            //得到服务器端并且生成数据库实例
+            return client.GetServer().GetDatabase(dbName);
         }
 
         #region 插入数据
@@ -533,5 +545,34 @@ namespace MongoDBTest
         #endregion
 
 
+    }
+
+    /// <summary>
+    /// Mongodb数据库的字段特性  主要是设置索引之用
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+    public class MongoDBFieldAttribute : Attribute
+    {
+        /// <summary>
+        /// 是否是索引
+        /// </summary>
+        public bool IsIndex { get; set; }
+
+        /// <summary>
+        /// 是否是唯一的  默认flase
+        /// </summary>
+        public bool Unique { get; set; }
+
+        /// <summary>
+        /// 是否是升序 默认true
+        /// </summary>
+        public bool Ascending { get; set; }
+
+        public MongoDBFieldAttribute(bool _isIndex)
+        {
+            this.IsIndex = _isIndex;
+            this.Unique = false;
+            this.Ascending = true;
+        }
     }
 }

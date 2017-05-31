@@ -37,7 +37,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI", "WebAPI\WebAPI.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZDL.DDD", "ZDL.DDD\ZDL.DDD.csproj", "{C154CA2F-19D5-4AD6-B8AF-3E883E3BCFD0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDBTest", "MongoDBTest\MongoDBTest.csproj", "{391FF6B0-874B-48F1-9029-CE5B77EAEF5B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDBDemo", "MongoDBDemo\MongoDBDemo.csproj", "{87901C87-DB0D-412F-91A3-E3876F00EDEB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,12 +103,14 @@ Global
 		{C154CA2F-19D5-4AD6-B8AF-3E883E3BCFD0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C154CA2F-19D5-4AD6-B8AF-3E883E3BCFD0}.Release|x86.ActiveCfg = Release|Any CPU
 		{C154CA2F-19D5-4AD6-B8AF-3E883E3BCFD0}.Release|x86.Build.0 = Release|Any CPU
-		{391FF6B0-874B-48F1-9029-CE5B77EAEF5B}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{391FF6B0-874B-48F1-9029-CE5B77EAEF5B}.Debug|x86.ActiveCfg = Debug|x86
-		{391FF6B0-874B-48F1-9029-CE5B77EAEF5B}.Debug|x86.Build.0 = Debug|x86
-		{391FF6B0-874B-48F1-9029-CE5B77EAEF5B}.Release|Any CPU.ActiveCfg = Release|x86
-		{391FF6B0-874B-48F1-9029-CE5B77EAEF5B}.Release|x86.ActiveCfg = Release|x86
-		{391FF6B0-874B-48F1-9029-CE5B77EAEF5B}.Release|x86.Build.0 = Release|x86
+		{87901C87-DB0D-412F-91A3-E3876F00EDEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87901C87-DB0D-412F-91A3-E3876F00EDEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87901C87-DB0D-412F-91A3-E3876F00EDEB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{87901C87-DB0D-412F-91A3-E3876F00EDEB}.Debug|x86.Build.0 = Debug|Any CPU
+		{87901C87-DB0D-412F-91A3-E3876F00EDEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87901C87-DB0D-412F-91A3-E3876F00EDEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87901C87-DB0D-412F-91A3-E3876F00EDEB}.Release|x86.ActiveCfg = Release|Any CPU
+		{87901C87-DB0D-412F-91A3-E3876F00EDEB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

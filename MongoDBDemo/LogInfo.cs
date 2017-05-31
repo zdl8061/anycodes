@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MongoDBTest
+namespace MongoDBDemo
 {
     /// <summary>
     /// 测试表格的一个实体类

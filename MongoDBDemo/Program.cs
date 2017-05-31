@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
+using System.Threading.Tasks;
 
-namespace MongoDBTest
+namespace MongoDBDemo
 {
     class Program
     {
@@ -13,7 +14,7 @@ namespace MongoDBTest
         static void Main(string[] args)
         {
             //创建Mongodb的数据库实例
-            db = new MongoDBHelper();
+            db = new MongoDBHelper("127.0.0.1", "TxIM");
 
             #region 1000W条数据的初始化
             //InitData();
@@ -29,7 +30,7 @@ namespace MongoDBTest
             PagerTest(3000, 100);
             PagerTest(30000, 100);
             PagerTest(300000, 100);
-            
+
             Console.ReadKey();
 
 
@@ -40,10 +41,10 @@ namespace MongoDBTest
         /// </summary>
         /// <param name="pageIndex">页码</param>
         /// <param name="pageSize">页尺寸</param>
-        static void PagerTest(int pageIndex,int pageSize)
+        static void PagerTest(int pageIndex, int pageSize)
         {
             //分页查询条件空（封装中会转恒真条件） 排序条件空（转为ObjectId递增） 设定页码 也尺寸
-            
+
             Console.WriteLine("页码{0},页尺寸{1}", pageIndex, pageSize);
             Stopwatch sw1 = new Stopwatch();
             sw1.Start();
