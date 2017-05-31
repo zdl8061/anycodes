@@ -91,7 +91,7 @@
     <Compile Include="AppBmPush\Persistence\IRepository.cs" />
     <Compile Include="AppBmPush\UnitTest1.cs" />
     <Compile Include="JObjectExtensions.cs" />
-    <Compile Include="MongoHelper.cs" />
+    <Compile Include="MongoDBHelper.cs" />
     <Compile Include="SamusMongoHelper.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="DapperDemo.cs" />
