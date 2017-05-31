@@ -1,4 +1,6 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Driver;
+using MongoDB.Driver.Builders;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -36,7 +38,7 @@ namespace MongoDBDemo
 
 
 
-            string _data = "{\"MsgBody\":[{\"MsgType\":\"TIMTextElem\",\"MsgContent\":{\"Text\":\"fasdfdsfdsf\"}},{\"MsgType\":\"TIMFaceElem\",\"MsgContent\":{\"Index\":3,\"Data\":\"[发呆]\"}},{\"MsgType\":\"TIMTextElem\",\"MsgContent\":{\"Text\":\"nexid = 2 & brandid = 2 & dialogid = \"}}],\"CallbackCommand\":\"C2C.CallbackAfterSendMsg\",\"From_Account\":\"VISITOR_11\",\"To_Account\":\"TXUSER_235500\",\"MsgTime\":1495788601}";
+            string _data = "{\"MsgBody\":[{\"MsgType\":\"TIMTextElem\",\"MsgContent\":{\"Text\":\"123456789\"}},{\"MsgType\":\"TIMFaceElem\",\"MsgContent\":{\"Index\":3,\"Data\":\"[发呆]\"}},{\"MsgType\":\"TIMTextElem\",\"MsgContent\":{\"Text\":\"nexid = 2 & brandid = 2 & dialogid = \"}}],\"CallbackCommand\":\"C2C.CallbackAfterSendMsg\",\"From_Account\":\"VISITOR_100\",\"To_Account\":\"TXUSER_235500\",\"MsgTime\":1495788601}";
             BsonDocument _bson = BsonDocument.Parse(_data);
 
             //Query.All("name", "a", "b");//通过多个元素来匹配数组
@@ -59,18 +61,19 @@ namespace MongoDBDemo
             //Query.Where(BsonJavaScript);//执行JavaScript
             //Query.Matches("Title", str);//模糊查询 相当于sql中like  -- str可包含正则表达式
 
-            //MongoDBHelper.InsertOne<BsonDocument>("chatlog", _bson);
+            db.Insert<BsonDocument>(_bson, "chatlog");
 
-            //var _chat = MongoDBHelper_Old.GetOne<BsonDocument>("chatlog", Query.EQ("From_Account", "VISITOR_11"));
+            var _chat = db.Find<BsonDocument>(Query.EQ("From_Account", "VISITOR_11"), "chatlog");
 
-            //var _t = MongoDBHelper_Old.GetAll<BsonDocument>("chatlog",
-            //    Query.And(Query.EQ("From_Account", "VISITOR_11"), Query.EQ("To_Account", "TXUSER_235500")
-            //   , Query.EQ("MsgBody.MsgType", "TIMTextElem")
-            //    ), new PagerInfo { Page = 1, PageSize = 20 });
+            var _t = db.Find<BsonDocument>(Query.And(Query.EQ("From_Account", "VISITOR_11"), Query.EQ("To_Account", "TXUSER_235500")
+               , Query.EQ("MsgBody.MsgType", "TIMTextElem")),
+               2, 10, new SortByDocument { { "_id", -1 } },
+               "chatlog");
 
-            //var _r = MongoDBHelper_Old.Delete("chatlog", "5928f0459d491c26e81b0191");
+            db.Remove<BsonDocument>(Query.EQ("From_Account", "123456789"), "chatlog");
 
-            //_r = MongoDBHelper_Old.UpdateOne("chatlog", _bson);
+            db.Update<BsonDocument>(Query.EQ("From_Account", "123456789"), 
+                new UpdateDocument { { "$set", new QueryDocument { { "From_Account", "1532153215" } } } }, "chatlog");
 
 
         }
