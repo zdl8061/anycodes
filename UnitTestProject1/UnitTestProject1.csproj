@@ -40,15 +40,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="MongoDB">
-      <HintPath>..\ZDL.AnyCodes\Lib\MongoDB.dll</HintPath>
-    </Reference>
-    <Reference Include="MongoDB.Bson">
-      <HintPath>..\ZDL.AnyCodes\Lib\MongoDB.Bson.dll</HintPath>
-    </Reference>
-    <Reference Include="MongoDB.Driver">
-      <HintPath>..\ZDL.AnyCodes\Lib\MongoDB.Driver.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -91,8 +82,6 @@
     <Compile Include="AppBmPush\Persistence\IRepository.cs" />
     <Compile Include="AppBmPush\UnitTest1.cs" />
     <Compile Include="JObjectExtensions.cs" />
-    <Compile Include="MongoDBHelper.cs" />
-    <Compile Include="SamusMongoHelper.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="DapperDemo.cs" />
     <Compile Include="UnitTest1.cs" />
@@ -101,7 +90,6 @@
     <Compile Include="UnitTest3.cs" />
     <Compile Include="UnitTest4.cs" />
     <Compile Include="DapperUnitTest.cs" />
-    <Compile Include="MongoTestSamus.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WebAPI\WebAPI.csproj">

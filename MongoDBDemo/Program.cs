@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MongoDB.Bson;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -20,18 +21,56 @@ namespace MongoDBDemo
             //InitData();
             #endregion
 
-            Console.WriteLine("Mongodb 中自己的Skip-Limit分页与自定义的Where-Limit分页效率测试（毫秒）：");
-            //各种分页 尺寸的测试 具体注释我也不写了 
-            PagerTest(1, 100);//这个测试忽略，估计第一次查询之后会相应的缓存下数据  导致之后的查询很快
-            PagerTest(3, 100);
-            PagerTest(30, 100);
-            PagerTest(300, 100);
-            PagerTest(300, 1000);
-            PagerTest(3000, 100);
-            PagerTest(30000, 100);
-            PagerTest(300000, 100);
+            //Console.WriteLine("Mongodb 中自己的Skip-Limit分页与自定义的Where-Limit分页效率测试（毫秒）：");
+            ////各种分页 尺寸的测试 具体注释我也不写了 
+            //PagerTest(1, 100);//这个测试忽略，估计第一次查询之后会相应的缓存下数据  导致之后的查询很快
+            //PagerTest(3, 100);
+            //PagerTest(30, 100);
+            //PagerTest(300, 100);
+            //PagerTest(300, 1000);
+            //PagerTest(3000, 100);
+            //PagerTest(30000, 100);
+            //PagerTest(300000, 100);
 
-            Console.ReadKey();
+            //Console.ReadKey();
+
+
+
+            string _data = "{\"MsgBody\":[{\"MsgType\":\"TIMTextElem\",\"MsgContent\":{\"Text\":\"fasdfdsfdsf\"}},{\"MsgType\":\"TIMFaceElem\",\"MsgContent\":{\"Index\":3,\"Data\":\"[发呆]\"}},{\"MsgType\":\"TIMTextElem\",\"MsgContent\":{\"Text\":\"nexid = 2 & brandid = 2 & dialogid = \"}}],\"CallbackCommand\":\"C2C.CallbackAfterSendMsg\",\"From_Account\":\"VISITOR_11\",\"To_Account\":\"TXUSER_235500\",\"MsgTime\":1495788601}";
+            BsonDocument _bson = BsonDocument.Parse(_data);
+
+            //Query.All("name", "a", "b");//通过多个元素来匹配数组
+            //Query.And(Query.EQ("name", "a"), Query.EQ("title", "t"));//同时满足多个条件
+            //Query.EQ("name", "a");//等于
+            //Query.Exists("type", true);//判断键值是否存在
+            //Query.GT("value", 2);//大于>
+            //Query.GTE("value", 3);//大于等于>=
+            //Query.In("name", "a", "b");//包括指定的所有值,可以指定不同类型的条件和值
+            //Query.LT("value", 9);//小于<
+            //Query.LTE("value", 8);//小于等于<=
+            //Query.Mod("value", 3, 1);//将查询值除以第一个给定值,若余数等于第二个给定值则返回该结果
+            //Query.NE("name", "c");//不等于
+            //Query.Nor(Array);//不包括数组中的值
+            //Query.Not("name");//元素条件语句
+            //Query.NotIn("name", "a", 2);//返回与数组中所有条件都不匹配的文档
+            //Query.Or(Query.EQ("name", "a"), Query.EQ("title", "t"));//满足其中一个条件
+            //Query.Size("name", 2);//给定键的长度
+            //Query.Type("_id", BsonType.ObjectId);//给定键的类型
+            //Query.Where(BsonJavaScript);//执行JavaScript
+            //Query.Matches("Title", str);//模糊查询 相当于sql中like  -- str可包含正则表达式
+
+            //MongoDBHelper.InsertOne<BsonDocument>("chatlog", _bson);
+
+            //var _chat = MongoDBHelper_Old.GetOne<BsonDocument>("chatlog", Query.EQ("From_Account", "VISITOR_11"));
+
+            //var _t = MongoDBHelper_Old.GetAll<BsonDocument>("chatlog",
+            //    Query.And(Query.EQ("From_Account", "VISITOR_11"), Query.EQ("To_Account", "TXUSER_235500")
+            //   , Query.EQ("MsgBody.MsgType", "TIMTextElem")
+            //    ), new PagerInfo { Page = 1, PageSize = 20 });
+
+            //var _r = MongoDBHelper_Old.Delete("chatlog", "5928f0459d491c26e81b0191");
+
+            //_r = MongoDBHelper_Old.UpdateOne("chatlog", _bson);
 
 
         }
@@ -94,5 +133,6 @@ namespace MongoDBDemo
                 }
             }
         }
+
     }
 }
