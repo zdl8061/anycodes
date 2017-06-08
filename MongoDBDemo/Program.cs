@@ -17,7 +17,7 @@ namespace MongoDBDemo
         static void Main(string[] args)
         {
             //创建Mongodb的数据库实例
-            db = new MongoDBHelper("127.0.0.1", "TxIM");
+            db = new MongoDBHelper("mongodb://localhost:27017/", "TxIM");
 
             #region 1000W条数据的初始化
             //InitData();
@@ -72,9 +72,9 @@ namespace MongoDBDemo
 
             db.Remove<BsonDocument>(Query.EQ("From_Account", "123456789"), "chatlog");
 
-            db.Update<BsonDocument>(Query.EQ("From_Account", "123456789"), 
-                new UpdateDocument { { "$set", new QueryDocument { { "From_Account", "1532153215" } } } }, "chatlog");
-
+            db.Update<BsonDocument>(Query.EQ("From_Account", "123456789"),
+                Update.Set("From_Account", "1532153215")
+                , "chatlog");
 
         }
 

@@ -27,24 +27,19 @@ namespace MongoDBDemo
         /// </summary>
         private readonly string OBJECTID_KEY = "_id";
 
-        public MongoDBHelper(string host, string dbName, int port = 27017, int timeout = 30)
+        public MongoDBHelper(string conection, string dbName)
         {
-            this._db = GetDataBase(host, dbName, port, timeout);
+            this._db = GetDataBase(conection, dbName);
         }
 
         /// <summary>
         /// 得到数据库实例
         /// </summary>
         /// <returns></returns>
-        private MongoDatabase GetDataBase(string host, string dbName, int port = 27017, int timeout = 30)
+        private MongoDatabase GetDataBase(string conection, string dbName)
         {
-            MongoClientSettings mongoSetting = new MongoClientSettings();
-            //设置连接超时时间
-            mongoSetting.ConnectTimeout = new TimeSpan(timeout * TimeSpan.TicksPerSecond);
-            //设置数据库服务器
-            mongoSetting.Server = new MongoServerAddress(host, port);
             //创建Mongo的客户端
-            MongoClient client = new MongoClient(mongoSetting);
+            MongoClient client = new MongoClient(conection);
             //得到服务器端并且生成数据库实例
             return client.GetServer().GetDatabase(dbName);
         }
