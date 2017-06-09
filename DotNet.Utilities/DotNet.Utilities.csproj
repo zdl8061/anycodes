@@ -10,13 +10,14 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DotNet.Utilities</RootNamespace>
     <AssemblyName>DotNet.Utilities</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -26,6 +27,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,6 +36,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Chart图形\Assistant.cs" />
@@ -45,6 +48,8 @@
     <Compile Include="Cookie&amp;Session&amp;Cache\SessionHelper.cs" />
     <Compile Include="Cookie&amp;Session&amp;Cache\SessionHelper2.cs" />
     <Compile Include="CSV文件转换\CsvHelper.cs" />
+    <Compile Include="Dapper\Common.cs" />
+    <Compile Include="Dapper\DapperDemo.cs" />
     <Compile Include="DEncrypt\MySecurity.cs" />
     <Compile Include="FormulaExpress.cs" />
     <Compile Include="FTP操作类\FTPClient.cs" />
@@ -53,6 +58,7 @@
     <Compile Include="GridViewHelper.cs" />
     <Compile Include="IpHelper.cs" />
     <Compile Include="Json\ConvertJson.cs" />
+    <Compile Include="Json\JObjectExtensions.cs" />
     <Compile Include="JS\JsHelper.cs" />
     <Compile Include="MediaHandler.cs" />
     <Compile Include="Mime\MediaTypes.cs" />
@@ -60,6 +66,9 @@
     <Compile Include="Mime\MimeHeaders.cs" />
     <Compile Include="Mime\MimeReader.cs" />
     <Compile Include="Mime\QuotedPrintableEncoding.cs" />
+    <Compile Include="MongoDb\MongoDBHelper.cs" />
+    <Compile Include="MongoDb\MongoDBHelper_Old.cs" />
+    <Compile Include="MongoDb\SamusMongoHelper.cs" />
     <Compile Include="PDF\PDFOperation.cs" />
     <Compile Include="PicDeal.cs" />
     <Compile Include="QueryString.cs" />
@@ -168,21 +177,42 @@
     <Compile Include="验证码\YZMHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Dapper\dapperDB\SqlCommonPager.txt" />
     <Content Include="DLL\COM.Excel.dll" />
     <Content Include="DLL\Excel.dll" />
     <Content Include="DLL\ICSharpCode.SharpZipLib.dll" />
     <Content Include="DLL\itextsharp.dll" />
     <Content Include="DLL\Microsoft.Office.Interop.Owc11.dll" />
     <Content Include="DLL\Microsoft.Web.UI.WebControls.dll" />
+    <Content Include="DLL\MongoDB.Bson.dll" />
+    <Content Include="DLL\MongoDB.dll" />
+    <Content Include="DLL\MongoDB.Driver.dll" />
     <Content Include="DLL\OWC10Chart.dll" />
+    <Content Include="DLL\ThoughtWorks.QRCode.dll" />
+    <Content Include="DLL\Txooo.dll" />
     <Content Include="ResourceManager\Sample.xml" />
     <Content Include="说明.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Dapper">
+      <HintPath>..\packages\Dapper.1.50.2\lib\net451\Dapper.dll</HintPath>
+    </Reference>
     <Reference Include="Excel, Version=1.5.0.0, Culture=neutral" />
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL" />
     <Reference Include="itextsharp, Version=5.1.2.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Office.Interop.Owc11, Version=11.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" />
+    <Reference Include="MongoDB">
+      <HintPath>..\ZDL.AnyCodes\Lib\MongoDB.dll</HintPath>
+    </Reference>
+    <Reference Include="MongoDB.Bson">
+      <HintPath>..\ZDL.AnyCodes\Lib\MongoDB.Bson.dll</HintPath>
+    </Reference>
+    <Reference Include="MongoDB.Driver">
+      <HintPath>..\ZDL.AnyCodes\Lib\MongoDB.Driver.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="OWC10Chart, Version=1.0.2074.16784, Culture=neutral" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -190,6 +220,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -197,6 +228,9 @@
     <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
     <Reference Include="System.Web" />
     <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Dapper\dapperDB\DapperDemo.rar" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
