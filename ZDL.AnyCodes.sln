@@ -8,6 +8,7 @@ EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "ZDL.AnyCodes.Site", "ZDL.AnyCodes.Site\", "{DC6D450F-52D2-487F-821C-5AB4E541CA45}"
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.5.2"
+		ProjectReferences = "{0a9704f9-7864-45af-bfa7-e09f2b30a29f}|DotNet.Utilities.dll;{d4f63af1-dcec-44a5-84cb-bb06485a75b3}|ZDL.AnyCodes.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_23494"
 		Debug.AspNetCompiler.PhysicalPath = "ZDL.AnyCodes.Site\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_23494\"
