@@ -76,7 +76,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaiDuMap.cs" />
-    <Compile Include="OrderTest.cs" />
     <Compile Include="QrHelper.cs" />
     <Compile Include="Service References\FilterService\Reference.cs">
       <AutoGen>True</AutoGen>
