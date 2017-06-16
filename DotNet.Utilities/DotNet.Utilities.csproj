@@ -188,6 +188,7 @@
     <Content Include="DLL\MongoDB.dll" />
     <Content Include="DLL\MongoDB.Driver.dll" />
     <Content Include="DLL\OWC10Chart.dll" />
+    <Content Include="DLL\SqlSugar.dll" />
     <Content Include="DLL\ThoughtWorks.QRCode.dll" />
     <Content Include="DLL\Txooo.dll" />
     <Content Include="ResourceManager\Sample.xml" />
