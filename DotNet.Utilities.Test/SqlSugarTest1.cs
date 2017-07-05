@@ -13,7 +13,8 @@ namespace DotNet.Utilities.Test
         {
             using (var db = GetInstance("DapperDemo"))
             {
-                var _userList = db.Ado.SqlQuery<UserInfo>("select * from users");
+                var _userList = db.Ado.SqlQuery<UserInfo>("SELECT * FROM Users");
+                //var _userList = db.Queryable<UserInfo>().ToList();
             }
         }
 
@@ -22,7 +23,7 @@ namespace DotNet.Utilities.Test
             var _connStr = TxDataHelper.GetDataHelper(dbName).DataConnection.ConnectionString;
             SqlSugarClient db = new SqlSugarClient(new ConnectionConfig() { ConnectionString = _connStr, DbType = DbType.SqlServer });
             
-            return db;
+                return db;
         }
     }
 
