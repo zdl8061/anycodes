@@ -53,7 +53,8 @@
       <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SqlSugar">
+    <Reference Include="SqlSugar, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\DotNet.Utilities\DLL\SqlSugar.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -94,6 +95,7 @@
     <Compile Include="ThreadTaskTest.cs" />
     <Compile Include="MongoDbTest.cs" />
     <Compile Include="SqlSugarTest1.cs" />
+    <Compile Include="PatternTest1.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DotNet.Utilities\DotNet.Utilities.csproj">
