@@ -14,12 +14,12 @@ namespace DotNet.Utilities.Test
         public void TestMethod1()
         {
             using (var db = GetInstance("DapperDemo"))
-            {                
+            {
                 //var _userList = db.Ado.SqlQuery<UserInfo>("SELECT * FROM Users");//字段名和表明必须和库一样，映射没用
                 var _userList = db.Queryable<UserInfo>().ToList();
 
                 JsonSerializerSettings jsetting = new JsonSerializerSettings();
-                jsetting.ContractResolver = new LimitPropsContractResolver(new string[] { "UserId", "Username" , "Regtime", "MyPermission" , "PermissionId", "PermissionName" });
+                jsetting.ContractResolver = new LimitPropsContractResolver(new string[] { "Context" }, false);
                 var _json = JsonConvert.SerializeObject(_userList, jsetting);
             }
         }
